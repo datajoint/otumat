@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 
 # based on setuptools.dist:assert_string_list
@@ -42,7 +42,7 @@ def write_arg_pub(cmd, basename, filename, force=False):
     arg_value = getattr(cmd.distribution, argname, None)
     if arg_value is not None and os.path.isfile(os.path.expanduser(arg_value)):
         arg_value = os.path.expanduser(arg_value)
-        with open(arg_value, "rb") as key_file:
+        with open(arg_value, "r") as key_file:
             write_value = key_file.read()
         egg_dir = str(Path(filename).parents[0])
         write_filename = '{}/{}.pub'.format(egg_dir, os.path.basename(egg_dir.split('.')[0]))
