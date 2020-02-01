@@ -1,0 +1,22 @@
+version: '2.2'
+x-net: &net
+  networks:
+      - main
+services:
+  app:
+    <<: *net
+    build:
+      context: .
+      args:
+        ALPINE_VER: $ALPINE_VER
+        PY_VER: $PY_VER
+    working_dir: /src
+    command: >
+      /bin/sh -c
+       "
+        ./package.sh .;
+       "
+    volumes:
+      - .:/src
+networks:
+  main:

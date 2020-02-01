@@ -14,7 +14,7 @@ setuptools.setup(
     version=__version__,
     author="Raphael Guzman",
     author_email="raphael.h.guzman@gmail.com",
-    description="DataJoint setuptools keywords and commands.",
+    description="Signed certificate metadata for verifying contents of pip modules.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/guzman-raphael/datajoint-python-metadata",
@@ -26,10 +26,10 @@ setuptools.setup(
     ],
     entry_points={
         "distutils.setup_keywords": [
-            "datajoint_privkey_path = {}:assert_string".format(pkg_name),
+            "privkey_path = {}:assert_string".format(pkg_name),
         ],
         "egg_info.writers": [
-            "datajoint_privkey_path.sig = {}:write_arg".format(pkg_name),
+            "privkey_path.sig = {}:write_arg".format(pkg_name),
         ],
     },
     install_requires=['cryptography'],

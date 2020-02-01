@@ -3,13 +3,14 @@ import hashlib
 from pathlib import Path
 from distutils.errors import DistutilsSetupError
 
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.serialization import load_pem_private_key,
+                                                            load_pem_public_key
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 
 # based on setuptools.dist:assert_string_list
@@ -28,10 +29,11 @@ def assert_string(dist, attr, value):
 def write_arg(cmd, basename, filename, force=False):
     argname = os.path.splitext(basename)[0]
     arg_value = getattr(cmd.distribution, argname, None)
-    if arg_value is not None:
+    if arg_value is not None and os.path.isfile(os.path.expanduser(arg_value)):
+        arg_value = os.path.expanduser(arg_value)
         egg_dir = str(Path(filename).parents[0])
         write_value = sign(arg_value, hash_pkg(egg_dir.split('.')[0]))
-        write_filename = '{}/datajoint.sig'.format(egg_dir)
+        write_filename = '{}/{}.sig'.format(egg_dir, os.path.basename(egg_dir.split('.')[0]))
         cmd.write_or_delete_file(argname, write_filename, write_value, force)
 
 
@@ -46,6 +48,18 @@ def sign(privkey_path, data):
         padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
         hashes.SHA256())
     return base64.b64encode(signature).decode('utf-8') + '\n'
+
+
+def verify(pubkey_path, data, signature):
+    with open(pubkey_path, "rb") as key_file:
+        pub_key = load_pem_public_key(
+            key_file.read(),
+            backend=default_backend())
+    pub_key.verify(
+        base64.b64decode(signature.encode()),
+        data.encode(),
+        padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
+        hashes.SHA256())
 
 
 def hash_pkg(pkgpath):
