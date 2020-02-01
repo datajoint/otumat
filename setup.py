@@ -14,10 +14,10 @@ setuptools.setup(
     version=__version__,
     author="Raphael Guzman",
     author_email="raphael.h.guzman@gmail.com",
-    description="Signed certificate metadata for verifying contents of pip modules.",
+    description="A setuptools extension for signed certificate and public key metadata for verifying contents of pip modules.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/guzman-raphael/datajoint-python-metadata",
+    url="https://github.com/guzman-raphael/setuptools_certificate",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
