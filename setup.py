@@ -30,8 +30,8 @@ setuptools.setup(
             "pubkey_path = {}:assert_string".format(pkg_name),
         ],
         "egg_info.writers": [
-            "privkey_path.sig = {}:write_arg_cert".format(pkg_name),
-            "pubkey_path.pub = {}:write_arg_pub".format(pkg_name),
+            ".sig = {}:write_arg".format(pkg_name),
+            ".pub = {}:write_arg".format(pkg_name),
         ],
     },
     install_requires=['cryptography'],
