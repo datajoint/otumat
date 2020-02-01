@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 
 # based on setuptools.dist:assert_string_list
@@ -26,7 +26,7 @@ def assert_string(dist, attr, value):
 
 
 # based on setuptools.command.egg_info:write_arg
-def write_arg(cmd, basename, filename, force=False):
+def write_arg_cert(cmd, basename, filename, force=False):
     argname = os.path.splitext(basename)[0]
     arg_value = getattr(cmd.distribution, argname, None)
     if arg_value is not None and os.path.isfile(os.path.expanduser(arg_value)):
@@ -34,6 +34,18 @@ def write_arg(cmd, basename, filename, force=False):
         egg_dir = str(Path(filename).parents[0])
         write_value = sign(arg_value, hash_pkg(egg_dir.split('.')[0]))
         write_filename = '{}/{}.sig'.format(egg_dir, os.path.basename(egg_dir.split('.')[0]))
+        cmd.write_or_delete_file(argname, write_filename, write_value, force)
+
+
+def write_arg_pub(cmd, basename, filename, force=False):
+    argname = os.path.splitext(basename)[0]
+    arg_value = getattr(cmd.distribution, argname, None)
+    if arg_value is not None and os.path.isfile(os.path.expanduser(arg_value)):
+        arg_value = os.path.expanduser(arg_value)
+        with open(arg_value, "rb") as key_file:
+            write_value = key_file.read()
+        egg_dir = str(Path(filename).parents[0])
+        write_filename = '{}/{}.pub'.format(egg_dir, os.path.basename(egg_dir.split('.')[0]))
         cmd.write_or_delete_file(argname, write_filename, write_value, force)
 
 
