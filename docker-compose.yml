@@ -10,6 +10,9 @@ services:
       args:
         ALPINE_VER: $ALPINE_VER
         PY_VER: $PY_VER
+    environment:
+    - TWINE_USERNAME
+    - TWINE_PASSWORD
     working_dir: /src
     command: >
       /bin/sh -c
