@@ -42,9 +42,9 @@ plugin_name = 'plugin1'
 base_meta = pkg_resources.get_distribution(base_name)
 plugin_meta = pkg_resources.get_distribution(plugin_name)
 
-pubkey_path = base_meta.get_metadata('{}.pub'.format(base_name))
 data = hash_pkg(str(Path(plugin_meta.module_path, plugin_name)))
 signature = plugin_meta.get_metadata('{}.sig'.format(plugin_name))
+pubkey_path = str(Path(base_meta.egg_info, '{}.pub'.format(base_name)))
 
 verify(pubkey_path, data, signature)
 ```

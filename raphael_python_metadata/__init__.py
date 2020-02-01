@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 
 # based on setuptools.dist:assert_string_list
