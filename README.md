@@ -34,18 +34,17 @@ setuptools.setup(
 
 ``` python
 import pkg_resources
+from pathlib import Path
 from raphael_python_metadata import hash_pkg, verify
 
-base = 'base'
-plugin = 'plugin1'
-base_module = __import__(base)
-plugin_module = __import__(plugin)
-base_meta = pkg_resources.get_distribution(base_module.__name__)
-plugin_meta = pkg_resources.get_distribution(plugin_module.__name__)
+base_name = 'base'
+plugin_name = 'plugin1'
+base_meta = pkg_resources.get_distribution(base_name)
+plugin_meta = pkg_resources.get_distribution(plugin_name)
 
-pubkey_path = base_meta.get_metadata('{}.pub'.format(base_meta.__name__))
-data = hash_pkg(plugin_module.__path__[0])
-signature = plugin_meta.get_metadata('{}.sig'.format(plugin_module.__name__))
+pubkey_path = base_meta.get_metadata('{}.pub'.format(base_name))
+data = hash_pkg(str(Path(plugin_meta.module_path, plugin_name)))
+signature = plugin_meta.get_metadata('{}.sig'.format(plugin_name))
 
 verify(pubkey_path, data, signature)
 ```
