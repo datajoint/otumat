@@ -1,7 +1,7 @@
 import setuptools
 from os import path
 
-pkg_name = "raphael_python_metadata"
+pkg_name = "setuptools_certificate"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()

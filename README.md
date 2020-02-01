@@ -1,4 +1,4 @@
-# Setuptools Certificate Metadata
+# Setuptools Certificate Metadata Extension
 
 This is a setuptools extension that provides new keyword arguments `privkey_path` and `pubkey_path`. 
 
@@ -15,8 +15,8 @@ This provides a solution to determining the 'trust-worthiness' of plugins or ext
 ``` python
 setuptools.setup(
     ...
-    setup_requires=['raphael_python_metadata'],
-    pubkey_path='~/keys/pubkey.pem',
+    setup_requires=['setuptools_certificate'],
+    pubkey_path='./pubkey.pem',
     ...
 ```
 
@@ -25,17 +25,17 @@ setuptools.setup(
 ``` python
 setuptools.setup(
     ...
-    setup_requires=['raphael_python_metadata'],
+    setup_requires=['setuptools_certificate'],
     privkey_path='~/keys/privkey.pem',
     ...
 ```
 
- # Verifying Contents
+## Verifying Contents
 
 ``` python
 import pkg_resources
 from pathlib import Path
-from raphael_python_metadata import hash_pkg, verify
+from setuptools_certificate import hash_pkg, verify
 
 base_name = 'base'
 plugin_name = 'plugin1'
@@ -47,4 +47,33 @@ signature = plugin_meta.get_metadata('{}.sig'.format(plugin_name))
 pubkey_path = str(Path(base_meta.egg_info, '{}.pub'.format(base_name)))
 
 verify(pubkey_path, data, signature)
+```
+
+
+# Compatibility with `git` and `openssl` CLI
+
+For reference, certificates may also be generated and verified using `git` and `openssl` by the following process:
+
+## Generate
+
+``` shell
+$ cd {{/path/to/local/repo/dir}}
+$ git add . --all
+$ GIT_HASH=$(git ls-files -s {{/pip/package/dir}} | git hash-object --stdin)
+$ printf $GIT_HASH | openssl dgst -sha256 -sign {{/path/to/privkey/pem}} -out {{pip_package_name}}.sigbin -sigopt rsa_padding_mode:pss
+$ openssl enc -base64 -in {{pip_package_name}}.sigbin -out {{pip_package_name}}.sig
+$ rm {{pip_package_name}}.sigbin
+$ git reset
+```
+
+## Verify
+
+``` shell
+$ cd {{/path/to/local/repo/dir}}
+$ git add . --all
+$ GIT_HASH=$(git ls-files -s {{/pip/package/dir}} | git hash-object --stdin)
+$ openssl enc -base64 -d -in {{pip_package_name}}.sig -out {{pip_package_name}}.sigbin
+$ printf $GIT_HASH | openssl dgst -sha256 -verify {{/path/to/pubkey/pem}} -signature {{pip_package_name}}.sigbin -sigopt rsa_padding_mode:pss
+$ rm {{pip_package_name}}.sigbin
+$ git reset
 ```
