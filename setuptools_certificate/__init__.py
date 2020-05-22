@@ -9,8 +9,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
-
-__version__ = "0.0.2"
+from .version import __version__
 
 
 # based on setuptools.dist:assert_string_list
