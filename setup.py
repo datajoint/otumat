@@ -34,6 +34,5 @@ setuptools.setup(
             ".pub = {}:write_arg".format(pkg_name),
         ],
     },
-    setup_requires=['cryptography'],
     install_requires=['cryptography'],
 )
