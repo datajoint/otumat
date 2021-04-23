@@ -1,10 +1,12 @@
-# Setuptools Certificate Metadata Extension
+# Otumat: Maintainer Tools & Utilities
 
-This is a setuptools extension that provides new keyword arguments `privkey_path` and `pubkey_path`. 
+Otumat (pronounced "Automate") is a suite of maintainer tools and utilities for pip packages.
+
+It includes a setuptools extension that provides new keyword arguments `privkey_path` and `pubkey_path`. 
 
 By specifying the `privkey_path`, setuptools will generate the git hash (SHA1) of the module directory and sign the output based on the PEM key path passed in. The resulting signature will be stored as egg metadata `{{module_name}}.sig` accessible via `pkg_resources` module. 
 
-If passing `pubkey_path`, this will simply be copied in as egg metadata `{{module_name}}.pub`. 
+If passing `pubkey_path`, this will simply be copied in as egg metadata `{{module_name}}.pub`.
 
 This provides a solution to determining the 'trust-worthiness' of plugins or extensions that may be developed by the community for a given pip package if the public key file is available for the RSA keypair. The choice of what to do for failed verification is up to you.
 
@@ -15,7 +17,7 @@ This provides a solution to determining the 'trust-worthiness' of plugins or ext
 ``` python
 setuptools.setup(
     ...
-    setup_requires=['setuptools_certificate'],
+    setup_requires=['otumat'],
     pubkey_path='./pubkey.pem',
     ...
 ```
@@ -25,7 +27,7 @@ setuptools.setup(
 ``` python
 setuptools.setup(
     ...
-    setup_requires=['setuptools_certificate'],
+    setup_requires=['otumat'],
     privkey_path='~/keys/privkey.pem',
     ...
 ```
@@ -35,7 +37,7 @@ setuptools.setup(
 ``` python
 import pkg_resources
 from pathlib import Path
-from setuptools_certificate import hash_pkg, verify
+from otumat import hash_pkg, verify
 
 base_name = 'base'
 plugin_name = 'plugin1'

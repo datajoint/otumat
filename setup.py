@@ -1,7 +1,7 @@
 import setuptools
 from os import path
 
-pkg_name = "setuptools_certificate"
+pkg_name = "otumat"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -14,10 +14,10 @@ setuptools.setup(
     version=__version__,
     author="Raphael Guzman",
     author_email="raphael.h.guzman@gmail.com",
-    description="A setuptools extension for signed certificate and public key metadata for verifying contents of pip modules.",
+    description="A suite of maintainer tools and utilities for pip packages.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/guzman-raphael/setuptools_certificate",
+    url="https://github.com/datajoint/otumat",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,3 +1,4 @@
+# docker-compose up --build
 version: '2.2'
 x-net: &net
   networks:
@@ -11,14 +12,14 @@ services:
         ALPINE_VER: $ALPINE_VER
         PY_VER: $PY_VER
     environment:
-    - TWINE_USERNAME
-    - TWINE_PASSWORD
+      - TWINE_USERNAME
+      - TWINE_PASSWORD
     working_dir: /src
-    command: >
-      /bin/sh -c
-       "
-        ./package.sh .;
-       "
+    command:
+      - sh
+      - -c
+      - |
+        ./package.sh .
     volumes:
       - .:/src
 networks:
