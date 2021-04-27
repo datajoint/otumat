@@ -264,7 +264,7 @@ class UsageAgent:
         else:
             body = loads(response.read())
             print(response.code)
-            print(f"{self.config['access_token']} -> {body['access_token']}")
+            print(f"{self.config['refresh_token']} -> {body['refresh_token']}")
             t = datetime.utcnow().timestamp() + int(body['expires_in'])
             print(f"{self.config['expires_at']} -> {t}")
             self.config['access_token'] = body['access_token']
