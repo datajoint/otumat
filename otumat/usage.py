@@ -29,6 +29,7 @@ from sqlite3 import connect
 from urllib import request as urllib_request
 from urllib.error import HTTPError, URLError
 from base64 import b64encode
+from time import sleep
 
 INSTALL_WINDOW = 1 * 60  # seconds
 
@@ -209,7 +210,7 @@ class UsageAgent:
                         event_type varchar(100)
                     )
                     """)
-            self.save_config()
+        self.save_config()
 
     def show_logs(self):
         with closing(connect(Path(self.home_path, 'main.db'))) as conn:
@@ -288,8 +289,22 @@ class UsageAgent:
             self.config['scope'] = body['scope']
             self.save_config()
 
-    def schedule(self, frequency='1m'):  # 0-inf / s | m | h | d
-        pass
+    def recurring_send(self, start: datetime, frequency='1m'):  # 0-inf / s | m | h | d
+        assert len(frequency) == 2, 'Invalid frequency, must be: 30s|1m|5m|15m|1h|6h|12h|1d'
+        period, unit = [(int(p), u) for p, u in zip(*frequency)][0]
+        if unit == 'm':
+            period *= 60
+        elif unit == 'h':
+            period *= 60 * 60
+        elif unit == 'd':
+            period *= 24 * 60 * 60
+        if datetime.utcnow() < start:
+            sleep([_[0].seconds + _[0].microseconds/1e6 - 1
+                   for _ in zip([start - datetime.utcnow()])][0])
+        while True:
+            sleep(period - datetime.utcnow().replace(
+                tzinfo=timezone('UTC')).timestamp() % period)
+            print(datetime.utcnow())
 
     def activate_startup(self):
         pass
