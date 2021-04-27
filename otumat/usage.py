@@ -232,7 +232,7 @@ class UsageAgent:
                             error_body['error_msg'] == 'Authorization Failed' and
                             'TokenExpiredError' in error_body['error_desc']):
                         self.refresh_token()
-                        # self.send()
+                        self.send()
                     else:
                         print(e.code)
                         print(error_body)
@@ -259,7 +259,11 @@ class UsageAgent:
         else:
             body = loads(response.read())
             print(response.code)
-            print(body)
+            self.config['access_token'] = body['access_token']
+            self.config['expires_at'] = datetime.utcnow().timestamp() + int(body['expires_in'])
+            self.config['refresh_token'] = body['refresh_token']
+            self.config['scope'] = body['scope']
+            self.save_config()
 
     def schedule(self, frequency='1m'):  # 0-inf / s | m | h | d
         pass
