@@ -25,6 +25,9 @@ from urllib.parse import urlencode
 from time import tzname
 # logging
 from sqlite3 import connect
+# sending
+from urllib import request as urllib_request
+from urllib.error import HTTPError, URLError
 
 INSTALL_WINDOW = 1 * 60  # seconds
 
@@ -205,7 +208,29 @@ class UsageAgent:
                              (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f'), event_type))
 
     def send(self):
-        pass
+        with closing(connect(Path(self.home_path, 'main.db'))) as conn:
+            with conn:
+                current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
+                rows = [r for r in conn.execute('SELECT * FROM event WHERE event_date < ?',
+                                                (current_time,))]
+                body = dict(installId=self.config['install_id'],
+                            headers=['install_id', 'event_date', 'event_type'], rows=rows)
+                req = urllib_request.Request(
+                    f"{self.config['host']}{self.config['event_route']}",
+                    headers={'Content-Type': 'application/json',
+                             'Authorization': f"Bearer {self.config['access_token']}"},
+                    data=json.dumps(body).encode('utf-8'))
+                try:
+                    response = urllib_request.urlopen(req)
+                    print(response.code)
+                    print(response.read())
+                except HTTPError as e:
+                    print(e.code)
+                    print(e.read().decode())
+                except URLError as e:
+                    print('Connection refused...')
+                else:
+                    conn.execute('DELETE FROM event WHERE event_date < ?', (current_time,))
 
     def refresh_token(self):
         pass
