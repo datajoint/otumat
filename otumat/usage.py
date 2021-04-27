@@ -4,7 +4,7 @@
 # MAC address
 
 from pathlib import Path
-from json import load, dump, dumps
+from json import load, dump, dumps, loads
 from os import makedirs
 from flask import Flask, request
 from appdirs import user_data_dir
@@ -227,7 +227,7 @@ class UsageAgent:
                     print(response.code)
                     print(response.read())
                 except HTTPError as e:
-                    error_body = load(e.read().decode())
+                    error_body = loads(e.read().decode())
                     if (e.code == 401 and isinstance(error_body, dict) and
                             error_body['error_msg'] == 'Authorization Failed' and
                             'TokenExpiredError' in error_body['error_desc']):
