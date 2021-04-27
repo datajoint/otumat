@@ -9,6 +9,7 @@ from json import load, dump
 from os import makedirs
 from flask import Flask, request
 from appdirs import user_data_dir
+from shutil import rmtree
 
 
 class UsageAgent:
@@ -19,12 +20,11 @@ class UsageAgent:
     def __init__(self, author: str, package_name: str, host: str = None,
                  install_route: str = None, event_route: str = None):
 
-        self.home_path = user_data_dir(package_name, author)  # ~/.local/share/datajoint-python
+        self.home_path = Path(user_data_dir(package_name, author), 'usage')  # ~/.local/share/datajoint-python/usage
         if Path(self.home_path, 'config.json').is_file():
             # prior config exists, loading
             print('loading config from file!')
             self.config = load(open(Path(self.home_path, 'config.json'), 'r'))
-            print(f'loaded: {self.config}')
         else:
             print('initializing flow!')
             # https://fakeservices.datajoint.io:2000, /user/usage-survey, /api/usage-event
@@ -33,10 +33,12 @@ class UsageAgent:
             self.save_config()
 
     def save_config(self):
-        print(f'dumping: {self.config}')
         makedirs(self.home_path, exist_ok=True)
         with open(Path(self.home_path, 'config.json'), 'w') as f:
             dump(self.config, f, indent=4, sort_keys=True)
+
+    def uninstall(self):
+        rmtree(self.home_path)
 
     def install(self):
         if input('Would you like to participate in our usage data collection to help us '
@@ -44,25 +46,25 @@ class UsageAgent:
             self.config['collect'] = False
         else:
             self.config['collect'] = True
-            # allocate variables for access and context
+            # # allocate variables for access and context
             # access_token = None
             # refresh_token = None
             # expires_at = None
             # scope = None
             # install_id = None
-
+            # # Temporary HTTP server to communicate with browser
             # app = Flask('survey-response')
 
             # @app.route("/health")
             # def health():
-            #     return f'''
+            #     return '''
             #     <!doctype html><html><head><script>
-            #         window.onload = function load() {{
+            #         window.onload = function load() {
             #         window.open('', '_self', '');
             #         var win = window.opener;
             #         win.postMessage(true, '*');
             #         window.close();
-            #         }};
+            #         };
             #     </script></head><body></body></html>
             #     '''
 
