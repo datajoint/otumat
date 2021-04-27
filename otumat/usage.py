@@ -28,6 +28,7 @@ from sqlite3 import connect
 # sending
 from urllib import request as urllib_request
 from urllib.error import HTTPError, URLError
+from base64 import b64encode
 
 INSTALL_WINDOW = 1 * 60  # seconds
 
@@ -73,6 +74,8 @@ class UsageAgent:
             expires_at = None
             scope = None
             install_id = None
+            client_id = None
+            client_secret = None
             # Temporary HTTP server to communicate with browser
             getLogger('werkzeug').setLevel(log_error)
             app = Flask('browser-interface')
@@ -103,6 +106,8 @@ class UsageAgent:
                 nonlocal expires_at
                 nonlocal scope
                 nonlocal install_id
+                nonlocal client_id
+                nonlocal client_secret
                 access_token = request.args.get('accessToken')
                 refresh_token = request.args.get('refreshToken')
                 expires_at = (None if request.args.get('expiresIn') is None
@@ -110,6 +115,8 @@ class UsageAgent:
                                     int(request.args.get('expiresIn'))))
                 scope = request.args.get('scope')
                 install_id = request.args.get('installId')
+                client_id = request.args.get('clientId')
+                client_secret = request.args.get('clientSecret')
                 shutdown_server()
                 return '''
                 <!doctype html><html><head><script>
@@ -186,7 +193,8 @@ class UsageAgent:
             print('Completing installation.')
             self.config = dict(self.config, collect=True, access_token=access_token,
                                refresh_token=refresh_token, expires_at=expires_at, scope=scope,
-                               install_id=install_id, operating_system=operating_system,
+                               install_id=install_id, client_id=client_id,
+                               client_secret=client_secret, operating_system=operating_system,
                                mac_address=mac_address, platform=platform,
                                platform_version=platform_version, package_manager=pkg_manager,
                                package_manager_version=pkg_manager_version,
@@ -254,7 +262,8 @@ class UsageAgent:
         print('refreshing token!')
         req = urllib_request.Request(
             f"{self.config['host']}{self.config['refresh_route']}",
-            headers={'Authorization': f"Basic Y2xpZW50MTpzZWNyZXQx"},
+            headers={'Authorization': f"""Basic {b64encode(f"{config['client_id']}:{
+                config['client_secret']}".encode('utf-8')).decode()}"""},
             data=urlencode(
                 dict(grant_type='refresh_token',
                      refresh_token=self.config['refresh_token'])).encode('utf-8'))
@@ -307,29 +316,29 @@ class UsageAgent:
 
 
 
-        # self.installation_id = source['installation_id']
+#         self.installation_id = source['installation_id']
 
 
 
-        # self.access_token = source['access_token']
-        # self.refresh_token = source['refresh_token']
-        # self.expires_on = source['expires_on']
-        # self.scope = source['scope']
+#         self.access_token = source['access_token']
+#         self.refresh_token = source['refresh_token']
+#         self.expires_on = source['expires_on']
+#         self.scope = source['scope']
 
 
 
-        # self.config = (loads(open(source, 'r').readlines())
-        #                if (isinstance(source, str) and (file exists))
-        #                else {k: v for k, v in source if k != 'config_path'})
-        # self.config_path = (source
-        #                if (isinstance(source, str) and (file exists))
-        #                else {k: v for k, v in source if k != 'config_path'})
+#         self.config = (loads(open(source, 'r').readlines())
+#                        if (isinstance(source, str) and (file exists))
+#                        else {k: v for k, v in source if k != 'config_path'})
+#         self.config_path = (source
+#                        if (isinstance(source, str) and (file exists))
+#                        else {k: v for k, v in source if k != 'config_path'})
 
-        # if isinstance(source, str):
-        #     # load from file
-        #     # assert file exists
-        #     pass
-        # else:
-        #     # initialize the agent
-        #     self.config = dict(collect=True, access_token=None, refresh_token=None,
-        #                        expires_on=None, scope=None, installation_id=None)
+#         if isinstance(source, str):
+#             # load from file
+#             # assert file exists
+#             pass
+#         else:
+#             # initialize the agent
+#             self.config = dict(collect=True, access_token=None, refresh_token=None,
+#                                expires_on=None, scope=None, installation_id=None)
