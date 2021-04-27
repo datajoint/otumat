@@ -239,8 +239,9 @@ class UsageAgent:
                         else:
                             print(e.code)
                             print(error_body)
+                            assert False, 'Unexpected...'
                     except URLError as e:
-                        print('Connection refused...')
+                        assert False, 'Connection refused...'
                     else:
                         conn.execute('DELETE FROM event WHERE event_date < ?', (current_time,))
 
@@ -257,8 +258,9 @@ class UsageAgent:
         except HTTPError as e:
             print(e.code)
             print(e.read().decode())
+            assert False, 'Refresh token has expired...'
         except URLError as e:
-            print('Connection refused...')
+            assert False, 'Connection refused...'
         else:
             body = loads(response.read())
             print(response.code)
