@@ -52,7 +52,6 @@ class UsageAgent:
             self.save_config()
 
     def save_config(self):
-        makedirs(self.home_path, exist_ok=True)
         with open(Path(self.home_path, 'config.json'), 'w') as f:
             dump(self.config, f, indent=4, sort_keys=True)
 
@@ -189,6 +188,7 @@ class UsageAgent:
                                package_manager_version=pkg_manager_version,
                                package_version=package_version, location=location,
                                timezone=timezone, timestamp=initiated_timestamp)
+            makedirs(self.home_path, exist_ok=True)
             with closing(connect(Path(self.home_path, 'main.db'))) as conn:
                 with conn:
                     conn.execute('CREATE TABLE event (event_date datetime(3), event_type)')
