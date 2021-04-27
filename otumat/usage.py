@@ -38,7 +38,8 @@ class UsageAgent:
     an OAuth2-compatible endpoint.
     """
     def __init__(self, author: str, data_directory: str, package_name: str, host: str = None,
-                 install_route: str = None, event_route: str = None):
+                 install_route: str = None, event_route: str = None,
+                 refresh_route: str = None):
 
         # ~/.local/share/datajoint-python/usage
         self.home_path = Path(user_data_dir(data_directory, author), 'usage')
@@ -50,7 +51,8 @@ class UsageAgent:
             print('initializing flow!')
             # https://fakeservices.datajoint.io:2000, /user/usage-survey, /api/usage-event
             self.config = dict(package_name=package_name, host=host,
-                               install_route=install_route, event_route=event_route)
+                               install_route=install_route, event_route=event_route,
+                               refresh_route=refresh_route)
             self.install()
             self.save_config()
 
@@ -230,7 +232,7 @@ class UsageAgent:
                             error_body['error_msg'] == 'Authorization Failed' and
                             'TokenExpiredError' in error_body['error_desc']):
                         self.refresh_token()
-                        self.send()
+                        # self.send()
                     else:
                         print(e.code)
                         print(e.read().decode())
@@ -242,9 +244,11 @@ class UsageAgent:
     def refresh_token(self):
         print('refreshing token!')
         req = urllib_request.Request(
-            f"{self.config['host']}/auth/token",
+            f"{self.config['host']}{self.config['refresh_route']}",
             headers={'Authorization': f"Basic Y2xpZW50MTpzZWNyZXQx"},
-            data=dict(grant_type='refresh_token', refresh_token=self.config['refresh_token']))
+            data=urlencode(
+                dict(grant_type='refresh_token',
+                     refresh_token=self.config['refresh_token'])).encode('utf-8'))
         try:
             response = urllib_request.urlopen(req)
             print(response.code)
