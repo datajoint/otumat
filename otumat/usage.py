@@ -54,7 +54,6 @@ class UsageAgent:
                                install_route=install_route, event_route=event_route,
                                refresh_route=refresh_route)
             self.install()
-            self.save_config()
 
     def save_config(self):
         with open(Path(self.home_path, 'config.json'), 'w') as f:
@@ -197,6 +196,7 @@ class UsageAgent:
             with closing(connect(Path(self.home_path, 'main.db'))) as conn:
                 with conn:
                     conn.execute('CREATE TABLE event (event_date datetime(3), event_type)')
+            self.save_config()
 
     def show_logs(self):
         with closing(connect(Path(self.home_path, 'main.db'))) as conn:
@@ -258,7 +258,8 @@ class UsageAgent:
         except HTTPError as e:
             print(e.code)
             print(e.read().decode())
-            assert False, 'Refresh token has expired...'
+            print('Usage upload connection stale, renewing permission...')
+            self.install()
         except URLError as e:
             assert False, 'Connection refused...'
         else:
