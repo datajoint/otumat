@@ -23,6 +23,8 @@ from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, SOL_SOCKET, SO_REUS
 from urllib.request import urlopen
 from urllib.parse import urlencode
 from time import tzname
+# logging
+from sqlite3 import connect
 
 INSTALL_WINDOW = 1 * 60  # seconds
 
@@ -187,9 +189,20 @@ class UsageAgent:
                                package_manager_version=pkg_manager_version,
                                package_version=package_version, location=location,
                                timezone=timezone, timestamp=initiated_timestamp)
+            with closing(connect(Path(self.home_path, 'main.db'))) as conn:
+                with conn:
+                    conn.execute('CREATE TABLE event (event_date datetime(3), event_type)')
+
+    def show_logs(self):
+        with closing(connect(Path(self.home_path, 'main.db'))) as conn:
+            with conn:
+                return [r for r in conn.execute('SELECT * FROM event')]
 
     def log(self, event_type):
-        pass
+        with closing(connect(Path(self.home_path, 'main.db'))) as conn:
+            with conn:
+                conn.execute('INSERT INTO event VALUES (?, ?)',
+                             (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f'), event_type))
 
     def send(self):
         pass
