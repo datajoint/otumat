@@ -10,6 +10,7 @@ from flask import Flask, request
 from appdirs import user_data_dir
 from shutil import rmtree
 from datetime import datetime
+import webbrowser
 # specs
 from re import findall
 from uuid import getnode
@@ -19,6 +20,7 @@ from pkg_resources import get_distribution
 from contextlib import closing
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from urllib.request import urlopen
+from urllib.parse import urlencode
 from time import tzname
 
 INSTALL_WINDOW = 1 * 60  # seconds
@@ -153,7 +155,8 @@ class UsageAgent:
                                 timezone=timezone, timestamp=initiated_timestamp,
                                 health=f'http://{local_ip}:{unused_port}/health',
                                 redirect=f'http://{local_ip}:{unused_port}/install-complete')
-            link = f'{survey_host}{survey_route}?{urlencode(query_params)}'
+            link = f"""{self.config['host']}{self.config['install_route']}?{
+                urlencode(query_params)}"""
             # instruct on browser access
             browser_available = True
             try:
