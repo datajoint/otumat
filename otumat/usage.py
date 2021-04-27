@@ -121,14 +121,14 @@ class UsageAgent:
                                                 'utf-8').split()[1]
                 pkg_manager = 'conda'
                 _, package_version, package_build, pkg_manager_channel = Popen(
-                    ['conda', 'list', package_name], stdout=PIPE,
+                    ['conda', 'list', self.config['package_name']], stdout=PIPE,
                     stderr=PIPE).communicate()[0].decode('utf-8').split('\n')[3].split()
             except FileNotFoundError:
                 pkg_manager_version = Popen(['pip', '--version'], stdout=PIPE,
                                             stderr=PIPE).communicate()[0].decode(
                                                 'utf-8').split()[1]
                 pkg_manager = 'pip'
-                package_version = get_distribution(package_name).version
+                package_version = get_distribution(self.config['package_name']).version
             # determine IP
             with closing(socket(AF_INET, SOCK_DGRAM)) as s:
                 s.connect(("8.8.8.8", 80))
