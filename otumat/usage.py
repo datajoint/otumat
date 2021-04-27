@@ -11,6 +11,7 @@ from appdirs import user_data_dir
 from shutil import rmtree
 from datetime import datetime
 import webbrowser
+from logging import getLogger, ERROR as log_error
 # specs
 from re import findall
 from uuid import getnode
@@ -68,6 +69,7 @@ class UsageAgent:
             scope = None
             install_id = None
             # Temporary HTTP server to communicate with browser
+            getLogger('werkzeug').setLevel(log_error)
             app = Flask('browser-interface')
 
             @app.route("/health")
