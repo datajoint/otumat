@@ -262,8 +262,8 @@ class UsageAgent:
         print('refreshing token!')
         req = urllib_request.Request(
             f"{self.config['host']}{self.config['refresh_route']}",
-            headers={'Authorization': f"""Basic {b64encode(f"{config['client_id']}:{
-                config['client_secret']}".encode('utf-8')).decode()}"""},
+            headers={'Authorization': f"""Basic {b64encode(f"{self.config['client_id']}:{
+                self.config['client_secret']}".encode('utf-8')).decode()}"""},
             data=urlencode(
                 dict(grant_type='refresh_token',
                      refresh_token=self.config['refresh_token'])).encode('utf-8'))
