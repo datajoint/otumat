@@ -212,6 +212,7 @@ class UsageAgent:
     def send(self):
         with closing(connect(Path(self.home_path, 'main.db'))) as conn:
             with conn:
+                self.refresh_token()
                 current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
                 rows = [r for r in conn.execute('SELECT * FROM event WHERE event_date < ?',
                                                 (current_time,))]
@@ -234,7 +235,6 @@ class UsageAgent:
                         if (e.code == 401 and isinstance(error_body, dict) and
                                 error_body['error_msg'] == 'Authorization Failed' and
                                 'TokenExpiredError' in error_body['error_desc']):
-                            self.refresh_token()
                             self.send()
                         else:
                             print(e.code)
