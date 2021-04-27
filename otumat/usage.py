@@ -4,7 +4,7 @@
 # MAC address
 
 from pathlib import Path
-from json import load, dump
+from json import load, dump, dumps
 from os import makedirs
 from flask import Flask, request
 from appdirs import user_data_dir
@@ -219,7 +219,7 @@ class UsageAgent:
                     f"{self.config['host']}{self.config['event_route']}",
                     headers={'Content-Type': 'application/json',
                              'Authorization': f"Bearer {self.config['access_token']}"},
-                    data=json.dumps(body).encode('utf-8'))
+                    data=dumps(body).encode('utf-8'))
                 try:
                     response = urllib_request.urlopen(req)
                     print(response.code)
