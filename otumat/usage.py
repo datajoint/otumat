@@ -251,13 +251,15 @@ class UsageAgent:
                      refresh_token=self.config['refresh_token'])).encode('utf-8'))
         try:
             response = urllib_request.urlopen(req)
-            print(response.code)
-            print(response.read())
         except HTTPError as e:
             print(e.code)
             print(e.read().decode())
         except URLError as e:
             print('Connection refused...')
+        else:
+            body = loads(response.read())
+            print(response.code)
+            print(body)
 
     def schedule(self, frequency='1m'):  # 0-inf / s | m | h | d
         pass
