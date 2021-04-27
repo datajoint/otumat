@@ -34,5 +34,5 @@ setuptools.setup(
             ".pub = {}:write_arg".format(pkg_name),
         ],
     },
-    install_requires=['cryptography'],
+    install_requires=['cryptography', 'flask', 'appdirs'],
 )

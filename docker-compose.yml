@@ -9,17 +9,21 @@ services:
     build:
       context: .
       args:
-        ALPINE_VER: $ALPINE_VER
-        PY_VER: $PY_VER
+        - ALPINE_VER
+        - PY_VER
     environment:
       - TWINE_USERNAME
       - TWINE_PASSWORD
     working_dir: /src
-    command:
-      - sh
-      - -c
-      - |
-        ./package.sh .
+    command: tail -f /dev/null
+    # command:
+    #   - sh
+    #   - -c
+    #   - |
+    #     # Prepare for conda-forge
+    #     grayskull pypi otumat
+    #     # Package
+    #     ./package.sh .
     volumes:
       - .:/src
 networks:
