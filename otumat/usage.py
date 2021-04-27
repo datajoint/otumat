@@ -15,11 +15,13 @@ from re import findall
 from uuid import getnode
 from sys import version_info, platform as operating_system
 from subprocess import Popen, PIPE
-from pkg_resource import get_distribution
+from pkg_resources import get_distribution
 from contextlib import closing
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from urllib.request import urlopen
 from time import tzname
+
+INSTALL_WINDOW = 1 * 60  # seconds
 
 
 class UsageAgent:
