@@ -195,7 +195,12 @@ class UsageAgent:
             makedirs(self.home_path, exist_ok=True)
             with closing(connect(Path(self.home_path, 'main.db'))) as conn:
                 with conn:
-                    conn.execute('CREATE TABLE event (event_date datetime(3), event_type)')
+                    conn.execute("""
+                    CREATE TABLE IF NOT EXISTS event(
+                        event_date datetime(3),
+                        event_type varchar(100)
+                    )
+                    """)
             self.save_config()
 
     def show_logs(self):
