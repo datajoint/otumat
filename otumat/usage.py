@@ -225,15 +225,35 @@ class UsageAgent:
                     print(response.code)
                     print(response.read())
                 except HTTPError as e:
-                    print(e.code)
-                    print(e.read().decode())
+                    error_body = e.read().decode()
+                    if (e.code == 401 and isinstance(error_body, dict) and
+                            error_body['error_msg'] == 'Authorization Failed' and
+                            'TokenExpiredError' in error_body['error_desc']):
+                        self.refresh_token()
+                        self.send()
+                    else:
+                        print(e.code)
+                        print(e.read().decode())
                 except URLError as e:
                     print('Connection refused...')
                 else:
                     conn.execute('DELETE FROM event WHERE event_date < ?', (current_time,))
 
     def refresh_token(self):
-        pass
+        print('refreshing token!')
+        req = urllib_request.Request(
+            f"{self.config['host']}/auth/token",
+            headers={'Authorization': f"Basic Y2xpZW50MTpzZWNyZXQx"},
+            data=dict(grant_type='refresh_token', refresh_token=self.config['refresh_token']))
+        try:
+            response = urllib_request.urlopen(req)
+            print(response.code)
+            print(response.read())
+        except HTTPError as e:
+            print(e.code)
+            print(e.read().decode())
+        except URLError as e:
+            print('Connection refused...')
 
     def schedule(self, frequency='1m'):  # 0-inf / s | m | h | d
         pass
