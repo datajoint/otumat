@@ -215,31 +215,34 @@ class UsageAgent:
                 current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
                 rows = [r for r in conn.execute('SELECT * FROM event WHERE event_date < ?',
                                                 (current_time,))]
-                body = dict(installId=self.config['install_id'],
-                            headers=['install_id', 'event_date', 'event_type'], rows=rows)
-                req = urllib_request.Request(
-                    f"{self.config['host']}{self.config['event_route']}",
-                    headers={'Content-Type': 'application/json',
-                             'Authorization': f"Bearer {self.config['access_token']}"},
-                    data=dumps(body).encode('utf-8'))
-                try:
-                    response = urllib_request.urlopen(req)
-                    print(response.code)
-                    print(response.read())
-                except HTTPError as e:
-                    error_body = loads(e.read().decode())
-                    if (e.code == 401 and isinstance(error_body, dict) and
-                            error_body['error_msg'] == 'Authorization Failed' and
-                            'TokenExpiredError' in error_body['error_desc']):
-                        self.refresh_token()
-                        self.send()
-                    else:
-                        print(e.code)
-                        print(error_body)
-                except URLError as e:
-                    print('Connection refused...')
+                if len(rows) == 0:
+                    print('no new logs...')
                 else:
-                    conn.execute('DELETE FROM event WHERE event_date < ?', (current_time,))
+                    body = dict(installId=self.config['install_id'],
+                                headers=['install_id', 'event_date', 'event_type'], rows=rows)
+                    req = urllib_request.Request(
+                        f"{self.config['host']}{self.config['event_route']}",
+                        headers={'Content-Type': 'application/json',
+                                'Authorization': f"Bearer {self.config['access_token']}"},
+                        data=dumps(body).encode('utf-8'))
+                    try:
+                        response = urllib_request.urlopen(req)
+                        print(response.code)
+                        print(response.read())
+                    except HTTPError as e:
+                        error_body = loads(e.read().decode())
+                        if (e.code == 401 and isinstance(error_body, dict) and
+                                error_body['error_msg'] == 'Authorization Failed' and
+                                'TokenExpiredError' in error_body['error_desc']):
+                            self.refresh_token()
+                            self.send()
+                        else:
+                            print(e.code)
+                            print(error_body)
+                    except URLError as e:
+                        print('Connection refused...')
+                    else:
+                        conn.execute('DELETE FROM event WHERE event_date < ?', (current_time,))
 
     def refresh_token(self):
         print('refreshing token!')
