@@ -148,8 +148,8 @@ class UsageAgent:
                                 platform=platform, platformVersion=platform_version,
                                 packageManager=pkg_manager,
                                 packageManagerVersion=pkg_manager_version,
-                                packageName=package_name, packageVersion=package_version,
-                                location=location,
+                                packageName=self.config['package_name'],
+                                packageVersion=package_version, location=location,
                                 timezone=timezone, timestamp=initiated_timestamp,
                                 health=f'http://{local_ip}:{unused_port}/health',
                                 redirect=f'http://{local_ip}:{unused_port}/install-complete')
