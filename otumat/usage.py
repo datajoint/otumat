@@ -227,7 +227,7 @@ class UsageAgent:
                     print(response.code)
                     print(response.read())
                 except HTTPError as e:
-                    error_body = e.read().decode()
+                    error_body = load(e.read().decode())
                     if (e.code == 401 and isinstance(error_body, dict) and
                             error_body['error_msg'] == 'Authorization Failed' and
                             'TokenExpiredError' in error_body['error_desc']):
