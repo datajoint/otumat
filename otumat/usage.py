@@ -235,7 +235,7 @@ class UsageAgent:
                         # self.send()
                     else:
                         print(e.code)
-                        print(error_body.decode())
+                        print(error_body)
                 except URLError as e:
                     print('Connection refused...')
                 else:
