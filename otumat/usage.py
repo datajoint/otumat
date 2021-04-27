@@ -264,8 +264,11 @@ class UsageAgent:
         else:
             body = loads(response.read())
             print(response.code)
+            print(f"{self.config['access_token']} -> {body['access_token']}")
+            t = datetime.utcnow().timestamp() + int(body['expires_in'])
+            print(f"{self.config['expires_at']} -> {t}")
             self.config['access_token'] = body['access_token']
-            self.config['expires_at'] = datetime.utcnow().timestamp() + int(body['expires_in'])
+            self.config['expires_at'] = t
             self.config['refresh_token'] = body['refresh_token']
             self.config['scope'] = body['scope']
             self.save_config()
