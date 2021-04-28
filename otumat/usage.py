@@ -230,7 +230,7 @@ class UsageAgent:
                                     f"{self.config['package_name']}_usage.vbs"))],
                           stdout=DEVNULL, stderr=DEVNULL, shell=True)
             else:
-                p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
+                p = Popen(cmd.split(' ') + ['&'], stdout=DEVNULL, stderr=DEVNULL)
         self.save_config()
 
     def show_logs(self):
