@@ -216,7 +216,7 @@ class UsageAgent:
             #            self.config['package_name'], '-d', self.config['data_directory'], '-s',
             #            datetime.utcnow().isoformat(), '-f', '5s'],
             #           preexec_fn=setpgrp)
-            os.system(f"""otumat upload -a {self.config['author']} -p {
+            system(f"""otumat upload -a {self.config['author']} -p {
                 self.config['package_name']} -d {self.config['data_directory']} -s {
                     datetime.utcnow().isoformat()} -f 5s""")
         self.save_config()
