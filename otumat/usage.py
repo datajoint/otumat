@@ -342,6 +342,11 @@ def activate_startup(cmd, package_name):
             <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
             <plist version="1.0">
             <dict>
+                <key>EnvironmentVariables</key>
+                <dict>
+                    <key>PATH</key>
+                    <string>{getenv('PATH')}</string>
+                </dict>
                 <key>Label</key>
                 <string>{package_name}_usage.startup</string>
                 <key>RunAtLoad</key>
