@@ -43,5 +43,5 @@ def otumat(args=None):
         print(kwargs, flush=True)
         UsageAgent(**{k: v for k, v in kwargs.items()
                       if k not in ('start', 'frequency')}).recurring_send(**{
-                          k: v for k, v in kwargs.items() if k in ('start', 'frequency')})
+                        k: v for k, v in kwargs.items() if k in ('start', 'frequency')})
     raise SystemExit
