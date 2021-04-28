@@ -347,13 +347,17 @@ def activate_startup(cmd, package_name):
                     <key>PATH</key>
                     <string>{getenv('PATH')}</string>
                 </dict>
+                <key>StandardOutPath</key>
+                <string>/Users/rguzman/Desktop/stdout.log</string>
+                <key>StandardErrorPath</key>
+                <string>/Users/rguzman/Desktop/stderr.log</string>
                 <key>Label</key>
                 <string>{package_name}_usage.startup</string>
                 <key>RunAtLoad</key>
                 <true/>
                 <key>ProgramArguments</key>
                 <array>
-                    {''.join([f'<string>{t}</string>' for t in cmd.split(' ')])}
+                    {''.join([f'<string>{t}</string>' for t in ('bash', '-c', cmd)])}
                 </array>
             </dict>
             </plist>
