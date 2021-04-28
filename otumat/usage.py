@@ -344,8 +344,13 @@ def activate_startup(cmd, package_name):
             """)
     elif general_system() == 'Windows':
         with open(Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu',
-                       'Programs', 'Startup', f'{package_name}_usage.bat'), 'w') as f:
-            f.write(f'{cmd}\n')
+                       'Programs', 'Startup', f'{package_name}_usage.vbs'), 'w') as f:
+            f.write(f"""
+            Dim WinScriptHost
+            Set WinScriptHost = CreateObject("WScript.Shell")
+            WinScriptHost.Run "{cmd}", 0
+            Set WinScriptHost = Nothing
+            """)
 
 
 def deactivate_startup(package_name):
@@ -361,7 +366,7 @@ def deactivate_startup(package_name):
         Path(home_dir, 'LaunchAgents', f'{package_name}_usage.startup.plist').unlink()
     elif general_system() == 'Windows':
         Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs',
-             'Startup', f'{package_name}_usage.bat').unlink()
+             'Startup', f'{package_name}_usage.vbs').unlink()
 
 
 # log
