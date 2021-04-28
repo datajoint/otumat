@@ -212,11 +212,12 @@ class UsageAgent:
                         event_type varchar(100)
                     )
                     """)
-            Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
-                   self.config['package_name'], '-d', self.config['data_directory'], '-s',
-                   datetime.utcnow().isoformat(), '-f', '5s'])
+            p = Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
+                       self.config['package_name'], '-d', self.config['data_directory'], '-s',
+                       datetime.utcnow().isoformat(), '-f', '5s'],
+                      start_new_session=True)
         self.save_config()
-        sleep(120)
+        sleep(30)
 
     def show_logs(self):
         with closing(connect(Path(self.home_path, 'main.db'))) as conn:
