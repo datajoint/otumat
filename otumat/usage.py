@@ -216,6 +216,7 @@ class UsageAgent:
                    self.config['package_name'], '-d', self.config['data_directory'], '-s',
                    datetime.utcnow().isoformat(), '-f', '5s'])
         self.save_config()
+        sleep(120)
 
     def show_logs(self):
         with closing(connect(Path(self.home_path, 'main.db'))) as conn:
