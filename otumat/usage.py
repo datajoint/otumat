@@ -53,7 +53,8 @@ class UsageAgent:
         else:
             print('initializing flow!')
             # https://fakeservices.datajoint.io:2000, /user/usage-survey, /api/usage-event
-            self.config = dict(package_name=package_name, host=host,
+            self.config = dict(author=author, data_directory=data_directory,
+                               package_name=package_name, host=host,
                                install_route=install_route, event_route=event_route,
                                refresh_route=refresh_route)
             self.install()
@@ -211,6 +212,9 @@ class UsageAgent:
                         event_type varchar(100)
                     )
                     """)
+            Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
+                   self.config['package_name'], '-d', self.config['data_directory'], '-s',
+                   datetime.utcnow().isoformat(), '-f', '5s'])
         self.save_config()
 
     def show_logs(self):
@@ -274,7 +278,7 @@ class UsageAgent:
         except HTTPError as e:
             print(e.code)
             print(e.read().decode())
-            print('Usage upload connection stale, renewing permission...')
+            print('Usage upload connection stale, requesting to renew permission...')
             self.install()
         except URLError as e:
             assert False, 'Connection refused...'
