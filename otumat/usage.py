@@ -5,7 +5,7 @@
 
 from pathlib import Path
 from json import load, dump, dumps, loads
-from os import makedirs
+from os import makedirs, getenv
 from flask import Flask, request
 from appdirs import user_data_dir
 from shutil import rmtree
@@ -16,6 +16,7 @@ from logging import getLogger, ERROR as log_error
 from re import findall
 from uuid import getnode
 from sys import version_info, platform as operating_system
+from platform import system as general_system
 from subprocess import Popen, PIPE, DEVNULL
 from pkg_resources import get_distribution
 from contextlib import closing
@@ -212,13 +213,11 @@ class UsageAgent:
                         event_type varchar(100)
                     )
                     """)
-            p = Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
-                       self.config['package_name'], '-d', self.config['data_directory'], '-s',
-                       datetime.utcnow().isoformat(), '-f', '5s'],
-                      stdout=DEVNULL, stderr=DEVNULL)
-            # system(f"""otumat upload -a {self.config['author']} -p {
-            #     self.config['package_name']} -d {self.config['data_directory']} -s {
-            #         datetime.utcnow().isoformat()} -f 5s""")
+            cmd = f"""otumat upload -a {self.config['author']} -p {
+                self.config['package_name']} -d {self.config['data_directory']} -s {
+                    datetime.utcnow().isoformat()} -f 5s"""
+            p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
+            activate_startup(cmd)
         self.save_config()
 
     def show_logs(self):
@@ -315,11 +314,21 @@ class UsageAgent:
                 tzinfo=timezone('UTC')).timestamp() % period)
             self.send()
 
-    def activate_startup(self):
+
+def activate_startup(cmd):
+    home_dir = getenv('USERPROFILE', getenv('HOME'))
+    if general_system() == 'Linux':
+        # Bourne shell compatible
+        with open(Path(home_dir, '.profile'), 'a') as f:
+            f.write(cmd)
+    elif general_system() == 'Darwin':
+        pass
+    elif general_system() == 'Windows':
         pass
 
-    def deactivate_startup(self):
-        pass
+
+def deactivate_startup(cmd):
+    pass
 
 
 # log
