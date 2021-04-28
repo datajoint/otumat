@@ -16,7 +16,7 @@ from logging import getLogger, ERROR as log_error
 from re import findall
 from uuid import getnode
 from sys import version_info, platform as operating_system
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, DEVNULL
 from pkg_resources import get_distribution
 from contextlib import closing
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
@@ -215,7 +215,7 @@ class UsageAgent:
             p = Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
                        self.config['package_name'], '-d', self.config['data_directory'], '-s',
                        datetime.utcnow().isoformat(), '-f', '5s'],
-                      close_fds=True)
+                      stdout=DEVNULL, stderr=DEVNULL)
             # system(f"""otumat upload -a {self.config['author']} -p {
             #     self.config['package_name']} -d {self.config['data_directory']} -s {
             #         datetime.utcnow().isoformat()} -f 5s""")
