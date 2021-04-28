@@ -33,6 +33,7 @@ setuptools.setup(
             ".sig = {}:write_arg".format(pkg_name),
             ".pub = {}:write_arg".format(pkg_name),
         ],
+        'console_scripts': ['otumat={}.command_line:otumat'.format(pkg_name)],
     },
     install_requires=['cryptography', 'flask', 'appdirs'],
 )
