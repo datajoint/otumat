@@ -334,8 +334,8 @@ def activate_startup(cmd, package_name):
         with open(Path(home_dir, '.profile'), 'a') as f:
             f.write(f'{cmd} &>/dev/null &\n')
     elif general_system() == 'Darwin':
-        makedirs(Path(home_dir, 'LaunchAgents'), exist_ok=True)
-        with open(Path(home_dir, 'LaunchAgents',
+        makedirs(Path(home_dir, 'Library', 'LaunchAgents'), exist_ok=True)
+        with open(Path(home_dir, 'Library', 'LaunchAgents',
                        f'{package_name}_usage.startup.plist'), 'w') as f:
             f.write(f"""
             <?xml version="1.0" encoding="UTF-8"?>
@@ -347,10 +347,6 @@ def activate_startup(cmd, package_name):
                     <key>PATH</key>
                     <string>{getenv('PATH')}</string>
                 </dict>
-                <key>StandardOutPath</key>
-                <string>/Users/rguzman/Desktop/stdout.log</string>
-                <key>StandardErrorPath</key>
-                <string>/Users/rguzman/Desktop/stderr.log</string>
                 <key>Label</key>
                 <string>{package_name}_usage.startup</string>
                 <key>RunAtLoad</key>
@@ -383,7 +379,7 @@ def deactivate_startup(package_name):
                                                  'upload' not in line and
                                                  package_name not in line)]
     elif general_system() == 'Darwin':
-        Path(home_dir, 'LaunchAgents', f'{package_name}_usage.startup.plist').unlink()
+        Path(home_dir, 'Library', 'LaunchAgents', f'{package_name}_usage.startup.plist').unlink()
     elif general_system() == 'Windows':
         Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs',
              'Startup', f'{package_name}_usage.vbs').unlink()
