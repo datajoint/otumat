@@ -305,7 +305,7 @@ class UsageAgent:
         while True:
             sleep(period - datetime.utcnow().replace(
                 tzinfo=timezone('UTC')).timestamp() % period)
-            print(datetime.utcnow())
+            self.send()
 
     def activate_startup(self):
         pass
