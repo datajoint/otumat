@@ -31,7 +31,6 @@ from urllib import request as urllib_request
 from urllib.error import HTTPError, URLError
 from base64 import b64encode
 from time import sleep
-from pytz import timezone
 
 INSTALL_WINDOW = 1 * 60  # seconds
 
@@ -317,8 +316,7 @@ class UsageAgent:
             sleep([_[0].seconds + _[0].microseconds/1e6 - 1
                    for _ in zip([start - datetime.utcnow()])][0])
         while True:
-            sleep(period - datetime.utcnow().replace(
-                tzinfo=timezone('UTC')).timestamp() % period)
+            sleep(period - datetime.utcnow().timestamp() % period)
             self.send()
 
 
