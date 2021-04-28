@@ -5,7 +5,7 @@
 
 from pathlib import Path
 from json import load, dump, dumps, loads
-from os import makedirs
+from os import makedirs, setpgrp
 from flask import Flask, request
 from appdirs import user_data_dir
 from shutil import rmtree
@@ -215,7 +215,7 @@ class UsageAgent:
             p = Popen(['otumat', 'upload', '-a', self.config['author'], '-p',
                        self.config['package_name'], '-d', self.config['data_directory'], '-s',
                        datetime.utcnow().isoformat(), '-f', '5s'],
-                      start_new_session=True)
+                      preexec_fn=setpgrp)
         self.save_config()
         sleep(30)
 
