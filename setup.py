@@ -35,5 +35,5 @@ setuptools.setup(
         ],
         'console_scripts': ['otumat={}.command_line:otumat'.format(pkg_name)],
     },
-    install_requires=['cryptography==3.3.2', 'flask', 'appdirs'],
+    install_requires=['cryptography<=3.3.2', 'flask', 'appdirs'],
 )
