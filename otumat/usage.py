@@ -44,7 +44,9 @@ class UsageAgent:
                  install_route: str = None, event_route: str = None,
                  refresh_route: str = None):
 
-        # ~/.local/share/datajoint-python/usage
+        # ~/.local/share/datajoint-python/usage  # linux
+        # %USERPROFILE%\AppData\Local\DataJoint\datajoint-python\usage  # windows
+        # ~/Library/Application Support/datajoint-python\usage  # macos
         self.home_path = Path(user_data_dir(data_directory, author), 'usage')
         if Path(self.home_path, 'config.json').is_file():
             # prior config exists, loading
@@ -144,9 +146,14 @@ class UsageAgent:
                     ['conda', 'list', self.config['package_name']], stdout=PIPE,
                     stderr=PIPE).communicate()[0].decode('utf-8').split('\n')[3].split()
             except FileNotFoundError:
-                pkg_manager_version = Popen(['pip', '--version'], stdout=PIPE,
-                                            stderr=PIPE).communicate()[0].decode(
-                                                'utf-8').split()[1]
+                try:
+                    pkg_manager_version = Popen(['pip', '--version'], stdout=PIPE,
+                                                stderr=PIPE).communicate()[0].decode(
+                                                    'utf-8').split()[1]
+                except FileNotFoundError:
+                    pkg_manager_version = Popen(['pip3', '--version'], stdout=PIPE,
+                                                stderr=PIPE).communicate()[0].decode(
+                                                    'utf-8').split()[1]
                 pkg_manager = 'pip'
                 package_version = get_distribution(self.config['package_name']).version
             # determine IP
