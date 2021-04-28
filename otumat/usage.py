@@ -5,7 +5,7 @@
 
 from pathlib import Path
 from json import load, dump, dumps, loads
-from os import makedirs, getenv
+from os import makedirs, getenv, system
 from flask import Flask, request
 from appdirs import user_data_dir
 from shutil import rmtree
@@ -230,7 +230,7 @@ class UsageAgent:
                                     f"{self.config['package_name']}_usage.vbs"))],
                           stdout=DEVNULL, stderr=DEVNULL, shell=True)
             else:
-                p = Popen(cmd.split(' ') + ['&'], stdout=DEVNULL, stderr=DEVNULL)
+                system(f'{cmd} &>/dev/null &')
         self.save_config()
 
     def show_logs(self):
