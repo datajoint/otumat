@@ -222,7 +222,7 @@ class UsageAgent:
                 p = Popen([str(Path(getenv('USERPROFILE'), 'AppData', 'Roaming', 'Microsoft',
                                     'Windows', 'Start Menu', 'Programs', 'Startup',
                                     f"{self.config['package_name']}_usage.vbs"))],
-                          stdout=DEVNULL, stderr=DEVNULL)
+                          stdout=DEVNULL, stderr=DEVNULL, shell=True)
             else:
                 p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
         self.save_config()
