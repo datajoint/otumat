@@ -320,7 +320,7 @@ def activate_startup(cmd):
     if general_system() == 'Linux':
         # Bourne shell compatible
         with open(Path(home_dir, '.profile'), 'a') as f:
-            f.write(f'cmd &>/dev/null &\n')
+            f.write(f'{cmd} &>/dev/null &\n')
     elif general_system() == 'Darwin':
         pass
     elif general_system() == 'Windows':
