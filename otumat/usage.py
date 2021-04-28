@@ -66,6 +66,7 @@ class UsageAgent:
 
     def uninstall(self):
         rmtree(self.home_path)
+        deactivate_startup(self.config['package_name'])
 
     def install(self):
         if input('Would you like to participate in our usage data collection to help us '
@@ -217,7 +218,7 @@ class UsageAgent:
                 self.config['package_name']} -d {self.config['data_directory']} -s {
                     datetime.utcnow().isoformat()} -f 5s"""
             p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
-            activate_startup(cmd)
+            activate_startup(cmd, self.config['package_name'])
         self.save_config()
 
     def show_logs(self):
@@ -315,20 +316,52 @@ class UsageAgent:
             self.send()
 
 
-def activate_startup(cmd):
+def activate_startup(cmd, package_name):
     home_dir = getenv('USERPROFILE', getenv('HOME'))
     if general_system() == 'Linux':
         # Bourne shell compatible
         with open(Path(home_dir, '.profile'), 'a') as f:
             f.write(f'{cmd} &>/dev/null &\n')
     elif general_system() == 'Darwin':
-        pass
+        makedirs(Path(home_dir, 'LaunchAgents'), exist_ok=True)
+        with open(Path(home_dir, 'LaunchAgents',
+                       f'{package_name}_usage.startup.plist'), 'w') as f:
+            f.write(f"""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+                <key>Label</key>
+                <string>{package_name}_usage.startup</string>
+                <key>RunAtLoad</key>
+                <true/>
+                <key>ProgramArguments</key>
+                <array>
+                    {''.join([f'<string>{t}</string>' for t in cmd.split(' ')])}
+                </array>
+            </dict>
+            </plist>
+            """)
     elif general_system() == 'Windows':
-        pass
+        with open(Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu',
+                       'Programs', 'Startup', f'{package_name}_usage.bat'), 'w') as f:
+            f.write(f'{cmd}\n')
 
 
-def deactivate_startup(cmd):
-    pass
+def deactivate_startup(package_name):
+    home_dir = getenv('USERPROFILE', getenv('HOME'))
+    if general_system() == 'Linux':
+        # Bourne shell compatible
+        lines = open(Path(home_dir, '.profile'), 'r').readlines()
+        with open(Path(home_dir, '.profile'), 'w') as f:
+            [f.write(line) for line in lines if ('otumat' not in line and
+                                                 'upload' not in line and
+                                                 package_name not in line)]
+    elif general_system() == 'Darwin':
+        Path(home_dir, 'LaunchAgents', f'{package_name}_usage.startup.plist').unlink()
+    elif general_system() == 'Windows':
+        Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs',
+             'Startup', f'{package_name}_usage.bat').unlink()
 
 
 # log
