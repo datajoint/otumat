@@ -217,8 +217,14 @@ class UsageAgent:
             cmd = f"""otumat upload -a {self.config['author']} -p {
                 self.config['package_name']} -d {self.config['data_directory']} -s {
                     datetime.utcnow().isoformat()} -f 5s"""
-            p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
             activate_startup(cmd, self.config['package_name'])
+            if general_system() == 'Windows':
+                p = Popen([str(Path(getenv('USERPROFILE'), 'AppData', 'Roaming', 'Microsoft',
+                                    'Windows', 'Start Menu', 'Programs', 'Startup',
+                                    f"{self.config['package_name']}_usage.vbs"))],
+                          stdout=DEVNULL, stderr=DEVNULL)
+            else:
+                p = Popen(cmd.split(' '), stdout=DEVNULL, stderr=DEVNULL)
         self.save_config()
 
     def show_logs(self):
