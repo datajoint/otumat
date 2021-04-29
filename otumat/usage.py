@@ -222,10 +222,11 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
-            server = Process(app.run(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
+            server = Process(target=app.run, kwargs=dict(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
             Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
-            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
             server.start()
+            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
+            server.join()
 
             makedirs(self.home_path, exist_ok=True)
             if cancelled:
