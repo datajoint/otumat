@@ -221,7 +221,7 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
-            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}, cancel route: http://{local_ip}:{unused_port}/install-cancelled")
+            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}, cancel route: http://{local_ip}:{unused_port}/install-cancelled?")
             Thread(
                 target=lambda url, d: urllib_request.urlopen(f'{url}?delay={d}'),
                 args=(f'http://{local_ip}:{unused_port}/install-cancelled',
