@@ -69,7 +69,7 @@ class UsageAgent:
 
     def uninstall(self):
         rmtree(self.home_path)
-        deactivate_startup(self.config['package_name'])
+        _deactivate_startup(self.config['package_name'])
 
     def install(self):
         if input('Would you like to participate in our usage data collection to help us '
@@ -252,7 +252,7 @@ class UsageAgent:
                 cmd = f"""otumat upload -a {self.config['author']} -p {
                     self.config['package_name']} -d {self.config['data_directory']} -s {
                         datetime.utcnow().isoformat()} -f {self.config['upload_frequency']}"""
-                activate_startup(cmd, self.config['package_name'])
+                _activate_startup(cmd, self.config['package_name'])
                 if general_system() == 'Windows':
                     p = Popen([str(Path(getenv('USERPROFILE'), 'AppData', 'Roaming', 'Microsoft',
                                         'Windows', 'Start Menu', 'Programs', 'Startup',
@@ -361,7 +361,7 @@ class UsageAgent:
                 self.send()
 
 
-def activate_startup(cmd, package_name):
+def _activate_startup(cmd, package_name):
     home_dir = getenv('USERPROFILE', getenv('HOME'))
     if general_system() == 'Linux':
         # Bourne shell compatible
@@ -403,7 +403,7 @@ def activate_startup(cmd, package_name):
             """)
 
 
-def deactivate_startup(package_name):
+def _deactivate_startup(package_name):
     home_dir = getenv('USERPROFILE', getenv('HOME'))
     if general_system() == 'Linux':
         startup_file = Path(home_dir, '.profile')
