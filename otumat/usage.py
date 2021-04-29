@@ -354,21 +354,20 @@ class UsageAgent:
                 self.save_config()
 
     def recurring_send(self, start: datetime, frequency='1m'):  # 0-inf / s | m | h | d
-        if self.config['collect']:
-            period, unit = [int(e) if e.isdigit() else e
-                            for e in findall(r'([0-9]+)([a-z]+)', frequency)[0]]
-            if unit == 'm':
-                period *= 60
-            elif unit == 'h':
-                period *= 60 * 60
-            elif unit == 'd':
-                period *= 24 * 60 * 60
-            if datetime.utcnow() < start:
-                sleep([_[0].seconds + _[0].microseconds/1e6 - 1
-                       for _ in zip([start - datetime.utcnow()])][0])
-            while True:
-                sleep(period - datetime.utcnow().timestamp() % period)
-                self.send()
+        period, unit = [int(e) if e.isdigit() else e
+                        for e in findall(r'([0-9]+)([a-z]+)', frequency)[0]]
+        if unit == 'm':
+            period *= 60
+        elif unit == 'h':
+            period *= 60 * 60
+        elif unit == 'd':
+            period *= 24 * 60 * 60
+        if datetime.utcnow() < start:
+            sleep([_[0].seconds + _[0].microseconds/1e6 - 1
+                   for _ in zip([start - datetime.utcnow()])][0])
+        while load(open(Path(self.home_path, 'config.json'), 'r'))['collect']:
+            sleep(period - datetime.utcnow().timestamp() % period)
+            self.send()
 
 
 def _activate_startup(cmd, package_name):
