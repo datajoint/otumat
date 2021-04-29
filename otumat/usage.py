@@ -13,7 +13,6 @@ from datetime import datetime
 import webbrowser
 from logging import getLogger, ERROR as log_error
 from threading import Thread
-from multiprocessing import Process
 # specs
 from re import findall
 from uuid import getnode
@@ -90,14 +89,11 @@ class UsageAgent:
             getLogger('werkzeug').setLevel(log_error)
             app = Flask('browser-interface')
 
-            def shutdown_server(server_handle, delay=0):
+            def shutdown_server(shutdown_handle, delay=0):
                 sleep(delay)
-                if isinstance(server_handle, Process) and server_handle.is_alive():
-                    print('Timeout exceeded. Cancelling usage tracking...')
-                    server_handle.terminate()
-                elif server_handle is not None:
+                if shutdown_handle is not None:
                     # Ensure running with the Werkzeug Server
-                    server_handle()
+                    shutdown_handle()
 
             @app.route("/health")
             def health():
@@ -114,7 +110,9 @@ class UsageAgent:
 
             @app.route("/install-cancelled")
             def install_cancelled():
-                shutdown_server(request.environ.get('werkzeug.server.shutdown'))
+                shutdown_server(
+                    shutdown_handle=request.environ.get('werkzeug.server.shutdown'),
+                    delay=request.args.get('delay', default=0, type=int))
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -146,7 +144,8 @@ class UsageAgent:
                 install_id = request.args.get('installId')
                 client_id = request.args.get('clientId')
                 client_secret = request.args.get('clientSecret')
-                shutdown_server(request.environ.get('werkzeug.server.shutdown'))
+                shutdown_server(
+                    shutdown_handle=request.environ.get('werkzeug.server.shutdown'))
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -222,13 +221,12 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
-            server = Process(target=app.run, kwargs=dict(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
-            print('invoking server stop thread')
-            Thread(target=shutdown_server, args=(server, self.config['response_timeout']), daemon=True).start()
-            print('about to start')
-            server.start()
-            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
-            server.join()
+            Thread(
+                target=lambda a, url, d: a.test_client().get(url=url,
+                                                             query_string=dict(delay=d)),
+                args=(app, '/install-cancelled', self.config['response_timeout']),
+                daemon=True).start()
+            app.run(host='0.0.0.0', port=unused_port, debug=False)
 
             makedirs(self.home_path, exist_ok=True)
             if cancelled:
