@@ -126,8 +126,6 @@ class UsageAgent:
                 <!doctype html><html><head><script>
                     window.onload = function load() {
                     window.open('', '_self', '');
-                    var win = window.opener;
-                    win.postMessage(true, '*');
                     window.close();
                     };
                 </script></head><body></body></html>
@@ -209,7 +207,8 @@ class UsageAgent:
                                 packageVersion=package_version, location=location,
                                 timezone=timezone, timestamp=initiated_timestamp,
                                 health=f'http://{local_ip}:{unused_port}/health',
-                                redirect=f'http://{local_ip}:{unused_port}/install-completed')
+                                redirect=f'http://{local_ip}:{unused_port}/install-completed',
+                                cancel=f'http://{local_ip}:{unused_port}/install-cancelled')
             link = f"""{self.config['host']}{self.config['install_route']}?{
                 urlencode(query_params)}"""
             # instruct on browser access
