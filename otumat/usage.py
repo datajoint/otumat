@@ -408,17 +408,24 @@ def activate_startup(cmd, package_name):
 def deactivate_startup(package_name):
     home_dir = getenv('USERPROFILE', getenv('HOME'))
     if general_system() == 'Linux':
+        startup_file = Path(home_dir, '.profile')
         # Bourne shell compatible
-        lines = open(Path(home_dir, '.profile'), 'r').readlines()
-        with open(Path(home_dir, '.profile'), 'w') as f:
-            [f.write(line) for line in lines if ('otumat' not in line and
-                                                 'upload' not in line and
-                                                 package_name not in line)]
+        if startup_file.exists():
+            lines = open(startup_file, 'r').readlines()
+            with open(startup_file, 'w') as f:
+                [f.write(line) for line in lines if ('otumat' not in line and
+                                                     'upload' not in line and
+                                                     package_name not in line)]
     elif general_system() == 'Darwin':
-        Path(home_dir, 'Library', 'LaunchAgents', f'{package_name}_usage.startup.plist').unlink()
+        startup_file = Path(home_dir, 'Library', 'LaunchAgents',
+                            f'{package_name}_usage.startup.plist')
+        if startup_file.exists():
+            startup_file.unlink()
     elif general_system() == 'Windows':
-        Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs',
-             'Startup', f'{package_name}_usage.vbs').unlink()
+        startup_file = Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows',
+                            'Start Menu', 'Programs', 'Startup', f'{package_name}_usage.vbs')
+        if startup_file.exists():
+            startup_file.unlink()
 
 
 # log
