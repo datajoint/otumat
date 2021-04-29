@@ -68,8 +68,9 @@ class UsageAgent:
             dump(self.config, f, indent=4, sort_keys=True)
 
     def uninstall(self):
-        rmtree(self.home_path)
         _deactivate_startup(self.config['package_name'])
+        if self.home_path.is_dir():
+            rmtree(self.home_path)
 
     def install(self):
         if input('Would you like to participate in our usage data collection to help us '
