@@ -13,6 +13,7 @@ from datetime import datetime
 import webbrowser
 from logging import getLogger, ERROR as log_error
 from threading import Thread
+from multiprocessing import Process
 # specs
 from re import findall
 from uuid import getnode
@@ -89,14 +90,14 @@ class UsageAgent:
             getLogger('werkzeug').setLevel(log_error)
             app = Flask('browser-interface')
 
-            def shutdown_server(delay=0):
+            def shutdown_server(server_handle, delay=0):
                 sleep(delay)
-                if delay > 0:
+                if isinstance(server_handle, Process):
                     print('Timeout exceeded. Cancelling usage tracking...')
-                func = request.environ.get('werkzeug.server.shutdown')
-                if func is not None:
+                    server_handle.terminate()
+                elif server_handle is not None:
                     # Ensure running with the Werkzeug Server
-                    func()
+                    server_handle()
 
             @app.route("/health")
             def health():
@@ -113,7 +114,7 @@ class UsageAgent:
 
             @app.route("/install-cancelled")
             def install_cancelled():
-                shutdown_server()
+                shutdown_server(request.environ.get('werkzeug.server.shutdown'))
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -145,7 +146,7 @@ class UsageAgent:
                 install_id = request.args.get('installId')
                 client_id = request.args.get('clientId')
                 client_secret = request.args.get('clientSecret')
-                shutdown_server()
+                shutdown_server(request.environ.get('werkzeug.server.shutdown'))
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -221,8 +222,10 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
-            Thread(target=shutdown_server, args=(self.config['response_timeout'],)).start()
-            app.run(host='0.0.0.0', port=unused_port, debug=False)  # verify if localhost works
+            server = Process(app.run(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
+            server.start()
+            Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
+            server.join()
 
             if cancelled:
                 print('Cancelled installation.')
