@@ -47,11 +47,11 @@ class UsageAgent:
 
         try:
             Popen(['otumat', '-h'], stdout=PIPE, stderr=PIPE).communicate()
-        except FileNotFoundError from None:
+        except FileNotFoundError:
             raise Exception("`otumat` console utility not available in current PATH. "
                             "Make sure that Python's bin and/or scripts directories are "
                             "properly added to the PATH. See here for more details: "
-                            "https://stackoverflow.com/questions/49966547/pip-10-0-1-warning-consider-adding-this-directory-to-path-or")
+                            "https://stackoverflow.com/questions/49966547/pip-10-0-1-warning-consider-adding-this-directory-to-path-or") from None
 
         # ~/.local/share/datajoint-python/usage  # linux
         # %USERPROFILE%\AppData\Local\DataJoint\datajoint-python\usage  # windows
