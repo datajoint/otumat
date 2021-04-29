@@ -64,6 +64,7 @@ class UsageAgent:
             self.install()
 
     def save_config(self):
+        makedirs(self.home_path, exist_ok=True)
         with open(Path(self.home_path, 'config.json'), 'w') as f:
             dump(self.config, f, indent=4, sort_keys=True)
 
@@ -227,7 +228,6 @@ class UsageAgent:
                 daemon=True).start()
             app.run(host='0.0.0.0', port=unused_port, debug=False)
 
-            makedirs(self.home_path, exist_ok=True)
             if cancelled:
                 print('Cancelled installation.')
                 self.config['collect'] = False
