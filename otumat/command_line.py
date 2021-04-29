@@ -27,7 +27,7 @@ def otumat(args=None):
                                dest='package_name',
                                help='Name of package which to collect usage data.')
     parser_upload.add_argument('-s', '--start',
-                               type=lambda d: datetime.strftime(d, '%Y-%m-%dT%H:%M:%S.%f'),
+                               type=lambda d: datetime.strptime(d, '%Y-%m-%dT%H:%M:%S.%f'),
                                required=True,
                                dest='start',
                                help='UTC datetime to start the schedule.')
