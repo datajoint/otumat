@@ -92,7 +92,7 @@ class UsageAgent:
 
             def shutdown_server(server_handle, delay=0):
                 sleep(delay)
-                if isinstance(server_handle, Process):
+                if isinstance(server_handle, Process) and server_handle.is_alive():
                     print('Timeout exceeded. Cancelling usage tracking...')
                     server_handle.terminate()
                 elif server_handle is not None:
@@ -224,7 +224,7 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
             server = Process(target=app.run, kwargs=dict(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
             print('invoking server stop thread')
-            Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
+            Thread(target=shutdown_server, args=(server, self.config['response_timeout']), daemon=True).start()
             print('about to start')
             server.start()
             print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
