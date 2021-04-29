@@ -221,6 +221,7 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
+            print(f'now: {datetime.now()}, timeout: {self.config['response_timeout']}')
             Thread(
                 target=lambda a, url, d: a.test_client().get(url=url,
                                                              query_string=dict(delay=d)),
