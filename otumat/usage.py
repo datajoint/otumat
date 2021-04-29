@@ -362,37 +362,36 @@ class UsageAgent:
 
 
 def activate_startup(cmd, package_name):
-    if self.config['collect']:
-        home_dir = getenv('USERPROFILE', getenv('HOME'))
-        if general_system() == 'Linux':
-            # Bourne shell compatible
-            with open(Path(home_dir, '.profile'), 'a') as f:
-                f.write(f'{cmd} &>/dev/null &\n')
-        elif general_system() == 'Darwin':
-            makedirs(Path(home_dir, 'Library', 'LaunchAgents'), exist_ok=True)
-            with open(Path(home_dir, 'Library', 'LaunchAgents',
-                      f'{package_name}_usage.startup.plist'), 'w') as f:
-                f.write(f"""
-                <?xml version="1.0" encoding="UTF-8"?>
-                <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-                <plist version="1.0">
+    home_dir = getenv('USERPROFILE', getenv('HOME'))
+    if general_system() == 'Linux':
+        # Bourne shell compatible
+        with open(Path(home_dir, '.profile'), 'a') as f:
+            f.write(f'{cmd} &>/dev/null &\n')
+    elif general_system() == 'Darwin':
+        makedirs(Path(home_dir, 'Library', 'LaunchAgents'), exist_ok=True)
+        with open(Path(home_dir, 'Library', 'LaunchAgents',
+                  f'{package_name}_usage.startup.plist'), 'w') as f:
+            f.write(f"""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+                <key>EnvironmentVariables</key>
                 <dict>
-                    <key>EnvironmentVariables</key>
-                    <dict>
-                        <key>PATH</key>
-                        <string>{getenv('PATH')}</string>
-                    </dict>
-                    <key>Label</key>
-                    <string>{package_name}_usage.startup</string>
-                    <key>RunAtLoad</key>
-                    <true/>
-                    <key>ProgramArguments</key>
-                    <array>
-                        {''.join([f'<string>{t}</string>' for t in ('bash', '-c', cmd)])}
-                    </array>
+                    <key>PATH</key>
+                    <string>{getenv('PATH')}</string>
                 </dict>
-                </plist>
-                """)
+                <key>Label</key>
+                <string>{package_name}_usage.startup</string>
+                <key>RunAtLoad</key>
+                <true/>
+                <key>ProgramArguments</key>
+                <array>
+                    {''.join([f'<string>{t}</string>' for t in ('bash', '-c', cmd)])}
+                </array>
+            </dict>
+            </plist>
+            """)
     elif general_system() == 'Windows':
         with open(Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu',
                        'Programs', 'Startup', f'{package_name}_usage.vbs'), 'w') as f:
