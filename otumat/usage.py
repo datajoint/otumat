@@ -45,6 +45,9 @@ class UsageAgent:
                  install_route: str = None, event_route: str = None, refresh_route: str = None,
                  response_timeout: int = 60, upload_frequency: str = '24h'):
 
+
+        # raise Exception("`otumat` console utility not available in current PATH. Make sure that your Python's console scripts and bin are properly added to the PATH. See here for more details: .")
+
         # ~/.local/share/datajoint-python/usage  # linux
         # %USERPROFILE%\AppData\Local\DataJoint\datajoint-python\usage  # windows
         # ~/Library/Application Support/datajoint-python\usage  # macos
