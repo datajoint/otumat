@@ -45,8 +45,13 @@ class UsageAgent:
                  install_route: str = None, event_route: str = None, refresh_route: str = None,
                  response_timeout: int = 60, upload_frequency: str = '24h'):
 
-
-        # raise Exception("`otumat` console utility not available in current PATH. Make sure that your Python's console scripts and bin are properly added to the PATH. See here for more details: .")
+        try:
+            Popen(['otumat', '-h'], stdout=PIPE, stderr=PIPE).communicate()
+        except FileNotFoundError:
+            raise Exception("`otumat` console utility not available in current PATH. "
+                            "Make sure that Python's bin and/or scripts directories are "
+                            "properly added to the PATH. See here for more details: "
+                            "https://stackoverflow.com/questions/49966547/pip-10-0-1-warning-consider-adding-this-directory-to-path-or")
 
         # ~/.local/share/datajoint-python/usage  # linux
         # %USERPROFILE%\AppData\Local\DataJoint\datajoint-python\usage  # windows
