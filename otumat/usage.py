@@ -89,11 +89,11 @@ class UsageAgent:
             getLogger('werkzeug').setLevel(log_error)
             app = Flask('browser-interface')
 
-            def shutdown_server(shutdown_handle, delay=0):
-                sleep(delay)
-                if shutdown_handle is not None:
+            def shutdown_server():
+                func = request.environ.get('werkzeug.server.shutdown')
+                if func is not None:
                     # Ensure running with the Werkzeug Server
-                    shutdown_handle()
+                    func()
 
             @app.route("/health")
             def health():
@@ -110,9 +110,7 @@ class UsageAgent:
 
             @app.route("/install-cancelled")
             def install_cancelled():
-                shutdown_server(
-                    shutdown_handle=request.environ.get('werkzeug.server.shutdown'),
-                    delay=request.args.get('delay', default=0, type=int))
+                shutdown_server()
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -144,8 +142,7 @@ class UsageAgent:
                 install_id = request.args.get('installId')
                 client_id = request.args.get('clientId')
                 client_secret = request.args.get('clientSecret')
-                shutdown_server(
-                    shutdown_handle=request.environ.get('werkzeug.server.shutdown'))
+                shutdown_server()
                 return '''
                 <!doctype html><html><head><script>
                     window.onload = function load() {
@@ -221,9 +218,9 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context=('/tmp/certs/fullchain.pem',
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
-            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}, cancel route: http://{local_ip}:{unused_port}/install-cancelled?")
+            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}, cancel route: http://{local_ip}:{unused_port}/install-cancelled")
             Thread(
-                target=lambda url, d: urllib_request.urlopen(f'{url}?delay={d}'),
+                target=lambda url, d: None if sleep(d) else urllib_request.urlopen(url),
                 args=(f'http://{local_ip}:{unused_port}/install-cancelled',
                       self.config['response_timeout']),
                 daemon=True).start()
