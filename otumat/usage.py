@@ -223,10 +223,9 @@ class UsageAgent:
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
             server = Process(app.run(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
-            server.start()
-            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
             Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
-            server.join()
+            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
+            server.start()
 
             makedirs(self.home_path, exist_ok=True)
             if cancelled:
