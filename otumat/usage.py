@@ -225,7 +225,8 @@ class UsageAgent:
             Thread(
                 target=lambda a, url, d: a.test_client().get(url,
                                                              query_string=dict(delay=d)),
-                args=(app, '/install-cancelled', self.config['response_timeout']),
+                args=(app, f'http://{local_ip}:{unused_port}/install-cancelled',
+                      self.config['response_timeout']),
                 daemon=True).start()
             app.run(host='0.0.0.0', port=unused_port, debug=False)
 
