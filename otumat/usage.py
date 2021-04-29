@@ -64,7 +64,6 @@ class UsageAgent:
             self.install()
 
     def save_config(self):
-        makedirs(self.home_path, exist_ok=True)
         with open(Path(self.home_path, 'config.json'), 'w') as f:
             dump(self.config, f, indent=4, sort_keys=True)
 
@@ -74,8 +73,10 @@ class UsageAgent:
             rmtree(self.home_path)
 
     def install(self):
+        makedirs(self.home_path, exist_ok=True)
         if input('Would you like to participate in our usage data collection to help us '
                  'improve our product, y/n? (y)\n').lower() == 'n':
+            print('Declined usage tracking. Storing config.')
             self.config['collect'] = False
         else:
             # # allocate variables for access and context
