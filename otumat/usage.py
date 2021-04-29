@@ -223,7 +223,9 @@ class UsageAgent:
             #                                                '/tmp/certs/privkey.pem'))
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
             server = Process(target=app.run, kwargs=dict(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
+            print('invoking server stop thread')
             Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
+            print('about to start')
             server.start()
             print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
             server.join()
