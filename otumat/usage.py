@@ -224,9 +224,11 @@ class UsageAgent:
             #app.run(host='0.0.0.0', port=3000, ssl_context='adhoc')
             server = Process(app.run(host='0.0.0.0', port=unused_port, debug=False))  # verify if localhost works
             server.start()
+            print(f"now: {datetime.now()}, timeout: {self.config['response_timeout']}")
             Thread(target=shutdown_server, args=(server, self.config['response_timeout'])).start()
             server.join()
 
+            makedirs(self.home_path, exist_ok=True)
             if cancelled:
                 print('Cancelled installation.')
                 self.config['collect'] = False
@@ -241,7 +243,6 @@ class UsageAgent:
                                    package_manager_version=pkg_manager_version,
                                    package_version=package_version, location=location,
                                    timezone=timezone, timestamp=initiated_timestamp)
-                makedirs(self.home_path, exist_ok=True)
                 with closing(connect(Path(self.home_path, 'main.db'))) as conn:
                     with conn:
                         conn.execute("""
