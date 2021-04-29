@@ -47,7 +47,7 @@ class UsageAgent:
 
         try:
             Popen(['otumat', '-h'], stdout=PIPE, stderr=PIPE).communicate()
-        except FileNotFoundError:
+        except FileNotFoundError from None:
             raise Exception("`otumat` console utility not available in current PATH. "
                             "Make sure that Python's bin and/or scripts directories are "
                             "properly added to the PATH. See here for more details: "
