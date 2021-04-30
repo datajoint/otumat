@@ -10,7 +10,6 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 from .version import __version__
-# from .usage import UsageAgent
 
 OTUMAT_DISABLE_USAGE_TRACKING = dict()
 
