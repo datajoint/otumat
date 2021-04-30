@@ -15,15 +15,14 @@ services:
       - TWINE_USERNAME
       - TWINE_PASSWORD
     working_dir: /src
-    command: tail -f /dev/null
-    # command:
-    #   - sh
-    #   - -c
-    #   - |
-    #     # Prepare for conda-forge
-    #     grayskull pypi otumat
-    #     # Package
-    #     ./package.sh .
+    command:
+      - sh
+      - -c
+      - |
+        # Prepare for conda-forge
+        grayskull pypi otumat
+        # Package
+        ./package.sh .
     volumes:
       - .:/src
 networks:
