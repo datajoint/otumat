@@ -12,6 +12,8 @@ import base64
 from .version import __version__
 # from .usage import UsageAgent
 
+OTUMAT_DISABLE_USAGE_TRACKING = dict()
+
 
 # based on setuptools.dist:assert_string_list
 def assert_string(dist, attr, value):
