@@ -12,7 +12,7 @@ from threading import Thread
 # client info
 from re import findall
 from uuid import getnode
-from sys import version_info, platform as operating_system
+from sys import version_info, stdin, platform as operating_system
 from platform import system as general_system
 from subprocess import Popen, PIPE, DEVNULL
 from pkg_resources import get_distribution
@@ -107,8 +107,9 @@ class UsageAgent:
         Primary installer for usage tracking data agent.
         """
         makedirs(self.home_path, exist_ok=True)
-        if input('Would you like to participate in our usage data collection to help us '
-                 'improve our product, y/n? (y)\n').lower() == 'n':
+        if (stdin.isatty() and input('Would you like to participate in our usage data '
+                                     'collection to help us improve our product, y/n? (y)\n'
+                                     ).lower() == 'n'):
             print('User declined usage tracking. Saving selection.')
             self.config['collect'] = False
         else:
