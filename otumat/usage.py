@@ -63,8 +63,7 @@ class UsageAgent:
         :param upload_frequency: Usage data upload interval for daemon, defaults to '24h'
         :type upload_frequency: str, optional
         """
-        nonlocal OTUMAT_DISABLE_USAGE_TRACKING
-        print(f'OTUMAT_DISABLE_USAGE_TRACKING: {OTUMAT_DISABLE_USAGE_TRACKING}')
+        print(f'OTUMAT_DISABLE_USAGE_TRACKING: {__import__('.').OTUMAT_DISABLE_USAGE_TRACKING}')
         # verify `otumat` utility in PATH
         try:
             Popen(['otumat', '-h'], stdout=PIPE, stderr=PIPE).communicate()
