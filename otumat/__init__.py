@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives import hashes
 import base64
 from .version import __version__
 
-OTUMAT_DISABLE_TRACKING_PACKAGES = []
+DISABLE_USAGE_TRACKING_PACKAGES = []
 
 
 # based on setuptools.dist:assert_string_list
