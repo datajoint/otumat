@@ -28,7 +28,7 @@ from urllib import request as urllib_request
 from urllib.error import HTTPError, URLError
 from base64 import b64encode
 from time import sleep
-from . import OTUMAT_DISABLE_USAGE_TRACKING
+from . import OTUMAT_DISABLE_TRACKING_PACKAGES
 
 
 class UsageAgent:
@@ -64,7 +64,6 @@ class UsageAgent:
         :param upload_frequency: Usage data upload interval for daemon, defaults to '24h'
         :type upload_frequency: str, optional
         """
-        print(f'OTUMAT_DISABLE_USAGE_TRACKING: {OTUMAT_DISABLE_USAGE_TRACKING}')
         # verify `otumat` utility in PATH
         try:
             Popen(['otumat', '-h'], stdout=PIPE, stderr=PIPE).communicate()
@@ -109,10 +108,11 @@ class UsageAgent:
         Primary installer for usage tracking data agent.
         """
         makedirs(self.home_path, exist_ok=True)
-        if (stdin.isatty() and input('Would you like to participate in usage data collection '
-                                     'to help the maintainers improve '
-                                     f"`{self.config['package_name']}`, y/n? (y)\n"
-                                     ).lower() == 'n'):
+        if (self.config['package_name'] in OTUMAT_DISABLE_TRACKING_PACKAGES or
+                (stdin.isatty() and
+                 input("Would you like to participate in usage data collection to help the "
+                       f"maintainers improve `{self.config['package_name']}`, y/n? (y)\n"
+                       ).lower() == 'n')):
             print('User declined usage tracking. Saving selection.')
             self.config['collect'] = False
         else:
