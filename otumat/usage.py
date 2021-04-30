@@ -107,8 +107,9 @@ class UsageAgent:
         Primary installer for usage tracking data agent.
         """
         makedirs(self.home_path, exist_ok=True)
-        if (stdin.isatty() and input('Would you like to participate in our usage data '
-                                     'collection to help us improve our product, y/n? (y)\n'
+        if (stdin.isatty() and input('Would you like to participate in usage data collection '
+                                     'to help the maintainers improve '
+                                     f"`{self.config['package_name']}`, y/n? (y)\n"
                                      ).lower() == 'n'):
             print('User declined usage tracking. Saving selection.')
             self.config['collect'] = False
@@ -264,8 +265,6 @@ class UsageAgent:
                       'machine, please navigate to the following link to access the usage '
                       f'tracking consent form: {link}')
             # start response server
-            # print('Starting response server listening on: '
-            #       f'http://{local_ip}:{unused_port}/health')
             Thread(
                 target=lambda url, d: None if sleep(d) else urllib_request.urlopen(url),
                 args=(f'http://{local_ip}:{unused_port}/install-cancelled',
@@ -277,7 +276,9 @@ class UsageAgent:
                 print('Cancelled usage tracking installation. Disabling any logging.')
                 self.config['collect'] = False
             else:
-                print('Consent confirmed. Completing usage tracking installation.')
+                print('Thank you for providing consent. Creating `otumat` background startup '
+                      'service to periodically upload usage data. Completing usage tracking '
+                      'installation.')
                 self.config = dict(self.config, collect=True, access_token=access_token,
                                    refresh_token=refresh_token, expires_at=expires_at,
                                    scope=scope, install_id=install_id, client_id=client_id,
