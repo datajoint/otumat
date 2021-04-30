@@ -5,6 +5,12 @@ from datetime import datetime
 
 
 def otumat(args=None):
+    """
+    Primary console interface for otumat's shell utilities.
+
+    :param args: List of arguments to be passed in, defaults to reading stdin
+    :type args: list, optional
+    """
     parser = ArgumentParser(prog='otumat',
                             description='Otumat console interface.')
     parser.add_argument('-V', '--version', action='version', version=f'Otumat {version}')
@@ -40,7 +46,6 @@ def otumat(args=None):
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
-        print(kwargs, flush=True)
         UsageAgent(**{k: v for k, v in kwargs.items()
                       if k not in ('start', 'frequency')}).recurring_send(**{
                         k: v for k, v in kwargs.items() if k in ('start', 'frequency')})
