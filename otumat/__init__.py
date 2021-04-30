@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 import base64
 from .version import __version__
-from .usage import UsageAgent
+# from .usage import UsageAgent
 
 
 # based on setuptools.dist:assert_string_list
