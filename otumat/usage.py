@@ -26,7 +26,7 @@ import sqlite3
 import urllib
 import urllib.error
 import base64
-import . as otumat
+from . import DISABLE_USAGE_TRACKING_PACKAGES
 
 
 class UsageAgent:
@@ -109,7 +109,7 @@ class UsageAgent:
         usage data.
         """
         os.makedirs(self.home_path, exist_ok=True)
-        if (self.config['package_name'] in otumat.DISABLE_USAGE_TRACKING_PACKAGES or
+        if (self.config['package_name'] in DISABLE_USAGE_TRACKING_PACKAGES or
                 not sys.stdin.isatty() or
                 input("Would you like to participate in usage data collection to help the "
                       f"maintainers improve `{self.config['package_name']}`, y/n? (n)\n"
