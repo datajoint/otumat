@@ -1,6 +1,6 @@
 import argparse
 from . import __version__ as version
-import .usage as otumat_usage
+from . import usage as otumat_usage
 import datetime
 
 
