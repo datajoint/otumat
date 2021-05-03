@@ -1,7 +1,7 @@
-from argparse import ArgumentParser
+import argparse
 from . import __version__ as version
-from .usage import UsageAgent
-from datetime import datetime
+import .usage as otumat_usage
+import datetime
 
 
 def otumat(args=None):
@@ -11,8 +11,8 @@ def otumat(args=None):
     :param args: List of arguments to be passed in, defaults to reading stdin
     :type args: list, optional
     """
-    parser = ArgumentParser(prog='otumat',
-                            description='Otumat console interface.')
+    parser = argparse.ArgumentParser(prog='otumat',
+                                     description='Otumat console interface.')
     parser.add_argument('-V', '--version', action='version', version=f'Otumat {version}')
     subparsers = parser.add_subparsers(dest='subparser')
     parser_upload = subparsers.add_parser('upload',
@@ -33,7 +33,8 @@ def otumat(args=None):
                                dest='package_name',
                                help='Name of package which to collect usage data.')
     parser_upload.add_argument('-s', '--start',
-                               type=lambda d: datetime.strptime(d, '%Y-%m-%dT%H:%M:%S.%f'),
+                               type=lambda d: datetime.datetime.strptime(
+                                    d, '%Y-%m-%dT%H:%M:%S.%f'),
                                required=True,
                                dest='start',
                                help='UTC datetime to start the schedule.')
@@ -46,7 +47,8 @@ def otumat(args=None):
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
-        UsageAgent(**{k: v for k, v in kwargs.items()
-                      if k not in ('start', 'frequency')}).recurring_send(**{
-                        k: v for k, v in kwargs.items() if k in ('start', 'frequency')})
+        otumat_usage.UsageAgent(**{k: v for k, v in kwargs.items()
+                                   if k not in ('start', 'frequency')}).recurring_send(**{
+                                        k: v for k, v in kwargs.items()
+                                        if k in ('start', 'frequency')})
     raise SystemExit

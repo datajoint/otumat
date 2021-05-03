@@ -1,21 +1,14 @@
 import setuptools
-from os import path
-
-pkg_name = "otumat"
-
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
-with open(path.join(path.abspath(path.dirname(__file__)), pkg_name, 'version.py')) as f:
-    exec(f.read())
+import pathlib
+import otumat as package
 
 setuptools.setup(
-    name=pkg_name,
-    version=__version__,
+    name=package.__name__,
+    version=package.__version__,
     author="Raphael Guzman",
     author_email="raphael.h.guzman@gmail.com",
     description="A suite of maintainer tools and utilities for pip packages.",
-    long_description=long_description,
+    long_description=pathlib.Path('README.md').read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/datajoint/otumat",
     packages=setuptools.find_packages(),
@@ -26,14 +19,15 @@ setuptools.setup(
     ],
     entry_points={
         "distutils.setup_keywords": [
-            "privkey_path = {}:assert_string".format(pkg_name),
-            "pubkey_path = {}:assert_string".format(pkg_name),
+            "privkey_path = {}:assert_string".format(package.__name__),
+            "pubkey_path = {}:assert_string".format(package.__name__),
         ],
         "egg_info.writers": [
-            ".sig = {}:write_arg".format(pkg_name),
-            ".pub = {}:write_arg".format(pkg_name),
+            ".sig = {}:write_arg".format(package.__name__),
+            ".pub = {}:write_arg".format(package.__name__),
         ],
-        'console_scripts': [f'{pkg_name}={pkg_name}.command_line:{pkg_name}'],
+        'console_scripts': [
+            f'{package.__name__}={package.__name__}.command_line:{package.__name__}'],
     },
     install_requires=['cryptography<=3.3.2', 'flask', 'appdirs'],
 )
