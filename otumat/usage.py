@@ -78,7 +78,7 @@ class UsageAgent:
         self.home_path = pathlib.Path(appdirs.user_data_dir(data_directory, author), 'usage')
         if pathlib.Path(self.home_path, 'config.json').is_file():
             # loading existing config
-            self.config = json.load(str(pathlib.Path(self.home_path, 'config.json')))
+            self.config = json.loads(pathlib.Path(self.home_path, 'config.json').read_text())
         else:
             # initializing a new consent flow
             self.config = dict(author=author, data_directory=data_directory,
@@ -426,7 +426,7 @@ class UsageAgent:
                 raise Exception('Connection refused when requesting a new token.')
             else:
                 # token returned successfully, update configuration
-                body = json.loads(response.read())
+                body = json.load(response)
                 self.config['access_token'] = body['access_token']
                 self.config['expires_at'] = (datetime.datetime.utcnow().timestamp() +
                                              int(body['expires_in']))
@@ -459,7 +459,7 @@ class UsageAgent:
             time.sleep([_[0].seconds + _[0].microseconds/1e6 - 1
                         for _ in zip([start - datetime.datetime.utcnow()])][0])
         # periodically unload cached usage data logs, checking config should user opt-out
-        while json.load(str(pathlib.Path(self.home_path, 'config.json')))['collect']:
+        while json.loads(pathlib.Path(self.home_path, 'config.json').read_text())['collect']:
             time.sleep(period - datetime.datetime.utcnow().timestamp() % period)
             self.send()
 
