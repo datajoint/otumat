@@ -68,17 +68,6 @@ class UsageAgent:
             # loading existing config
             self.config = json.loads(pathlib.Path(self.home_path, 'config.json').read_text())
         else:
-            # verify `otumat` utility in PATH
-            try:
-                subprocess.Popen(['otumat', '-h'], stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE).communicate()
-            except FileNotFoundError:
-                raise Exception("`otumat` console utility not available in current PATH. "
-                                "Make sure that Python's bin and/or scripts directories are "
-                                "properly added to the PATH. See here for more details: "
-                                "https://stackoverflow.com/questions/49966547"
-                                "/pip-10-0-1-warning-consider-adding-"
-                                "this-directory-to-path-or") from None
             # initializing a new consent flow
             self.config = dict(author=author, data_directory=data_directory,
                                package_name=package_name, host=host,
@@ -116,6 +105,17 @@ class UsageAgent:
             print('User declined usage tracking. Saving selection.')
             self.config['collect'] = False
         else:
+            # verify `otumat` utility in PATH
+            try:
+                subprocess.Popen(['otumat', '-h'], stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE).communicate()
+            except FileNotFoundError:
+                raise Exception("`otumat` console utility not available in current PATH. "
+                                "Make sure that Python's bin and/or scripts directories are "
+                                "properly added to the PATH. See here for more details: "
+                                "https://stackoverflow.com/questions/49966547"
+                                "/pip-10-0-1-warning-consider-adding-"
+                                "this-directory-to-path-or") from None
             # allocate variables for access and context
             access_token = None
             refresh_token = None
