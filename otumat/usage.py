@@ -540,7 +540,7 @@ def _deactivate_startup(*, package_name: str):
             with open(startup_file, 'w') as f:
                 for line in lines:
                     if not all(t in line for t in ('otumat upload ', f' -p {package_name} ')):
-                        f.write(line)
+                        f.write(f'{line}\n')
         except FileNotFoundError:
             pass
     elif platform.system() == 'Darwin':
