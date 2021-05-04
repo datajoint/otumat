@@ -318,7 +318,7 @@ class UsageAgent:
                                 '-s', datetime.datetime.utcnow().isoformat(),
                                 '-f', self.config['upload_frequency']])
                 # enabling usage data upload daemon at startup
-                # _activate_startup(cmd=cmd, package_name=self.config['package_name'])
+                _activate_startup(cmd=cmd, package_name=self.config['package_name'])
                 # manually starting usage data upload daemon
                 if platform.system() == 'Windows':
                     p = subprocess.Popen(
