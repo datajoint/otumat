@@ -99,7 +99,7 @@ class UsageAgent:
         """
         Remove configuration, logs, daemon, and active processes relating to usage agent.
         """
-        _deactivate_startup(self.config['package_name'])
+        _deactivate_startup(package_name=self.config['package_name'])
         if self.home_path.is_dir():
             shutil.rmtree(self.home_path)
 
@@ -318,7 +318,7 @@ class UsageAgent:
                                 '-s', datetime.datetime.utcnow().isoformat(),
                                 '-f', self.config['upload_frequency']])
                 # enabling usage data upload daemon at startup
-                _activate_startup(cmd, self.config['package_name'])
+                _activate_startup(cmd=cmd, package_name=self.config['package_name'])
                 # manually starting usage data upload daemon
                 if platform.system() == 'Windows':
                     p = subprocess.Popen(

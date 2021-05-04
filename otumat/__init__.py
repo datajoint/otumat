@@ -34,7 +34,7 @@ def write_arg(cmd, basename, filename, force=False):
         pkg_dir = os.path.splitext(egg_dir)[0]
         pkg_name = os.path.basename(pkg_dir)
         if argname == 'privkey_path':
-            write_value = sign(arg_value, hash_pkg(pkg_dir))
+            write_value = sign(privkey_path=arg_value, data=hash_pkg(pkgpath=pkg_dir))
         else:
             write_value = pathlib.Path(arg_value).read_text()
         write_filename = str(pathlib.Path(egg_dir, '{}{}'.format(pkg_name, basename)))
@@ -75,7 +75,7 @@ def verify(*, pubkey_path, data, signature):
 def hash_pkg(*, pkgpath):
     refpath = pathlib.Path(pkgpath).absolute().parents[0]
     details = ''
-    details = _update_details_dir(pkgpath, refpath, details)
+    details = _update_details_dir(dirpath=pkgpath, refpath=refpath, details=details)
     # hash output to prepare for signing
     return hashlib.sha1('blob {}\0{}'.format(len(details), details).encode()).hexdigest()
 
@@ -86,9 +86,9 @@ def _update_details_dir(*, dirpath, refpath, details):
     for path in paths:
         if 'pycache' not in str(path):
             if os.path.isdir(str(path)):
-                details = _update_details_dir(path, refpath, details)
+                details = _update_details_dir(dirpath=path, refpath=refpath, details=details)
             else:
-                details = _update_details_file(path, refpath, details)
+                details = _update_details_file(filepath=path, refpath=refpath, details=details)
     return details
 
 
