@@ -282,10 +282,10 @@ class UsageAgent:
                       self.config['response_timeout']))
             cancel_process.start()
             app.run(host='0.0.0.0', port=unused_port, debug=False)
+            cancel_process.terminate()
             # received a response
             if cancelled:
                 print('Cancelled usage tracking installation. Disabling any logging.')
-                cancel_process.terminate()
                 self.config['collect'] = False
             else:
                 print('Thank you for providing consent. Creating `otumat` background startup '
