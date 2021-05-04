@@ -476,13 +476,15 @@ def _activate_startup(*, cmd: str, package_name: str):
     home_dir = os.getenv('USERPROFILE', os.getenv('HOME'))
     if platform.system() == 'Linux':
         # trigger startup by appending to user's profile script, Bourne shell compatible
-        with open(pathlib.Path(home_dir, '.profile'), 'a') as f:
+        startup_file = pathlib.Path(home_dir, '.profile')
+        with open(startup_file, 'a') as f:
             f.write(f'{cmd} &>/dev/null &\n')
     elif platform.system() == 'Darwin':
         # trigger startup using launchd by utiling launch agents
-        os.makedirs(pathlib.Path(home_dir, 'Library', 'LaunchAgents'), exist_ok=True)
-        with open(pathlib.Path(home_dir, 'Library', 'LaunchAgents',
-                  f'{package_name}_usage.startup.plist'), 'w') as f:
+        startup_file = pathlib.Path(home_dir, 'Library', 'LaunchAgents',
+                                    f'{package_name}_usage.startup.plist')
+        os.makedirs(startup_file.parent, exist_ok=True)
+        with open(startup_file, 'w') as f:
             f.write(f"""
             <?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE plist PUBLIC
@@ -509,9 +511,10 @@ def _activate_startup(*, cmd: str, package_name: str):
     elif platform.system() == 'Windows':
         # trigger startup by utilizing user's startup directory and a VBScript to start a
         # background program
-        with open(pathlib.Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows',
-                               'Start Menu', 'Programs', 'Startup',
-                               f'{package_name}_usage.vbs'), 'w') as f:
+        startup_file = pathlib.Path(home_dir, 'AppData', 'Roaming', 'Microsoft', 'Windows',
+                                    'Start Menu', 'Programs', 'Startup',
+                                    f'{package_name}_usage.vbs')
+        with open(startup_file, 'w') as f:
             f.write(f"""
             Dim WinScriptHost
             Set WinScriptHost = CreateObject("WScript.Shell")
@@ -533,9 +536,10 @@ def _deactivate_startup(*, package_name: str):
         # Bourne shell compatible
         startup_file = pathlib.Path(home_dir, '.profile')
         try:
-            for line in pathlib.Path(startup_file).read_text().splitlines():
-                if not any(t in line for t in ('otumat upload ', f' -p {package_name} ')):
-                    f.write(line)
+            with open(startup_file, 'w') as f:
+                for line in pathlib.Path(startup_file).read_text().splitlines():
+                    if not any(t in line for t in ('otumat upload ', f' -p {package_name} ')):
+                        f.write(line)
         except FileNotFoundError:
             pass
     elif platform.system() == 'Darwin':
