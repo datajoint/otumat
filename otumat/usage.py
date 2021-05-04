@@ -536,9 +536,9 @@ def _deactivate_startup(*, package_name: str):
         # Bourne shell compatible
         startup_file = pathlib.Path(home_dir, '.profile')
         try:
+            lines = pathlib.Path(startup_file).read_text().splitlines()
             with open(startup_file, 'w') as f:
-                for line in pathlib.Path(startup_file).read_text().splitlines():
-                    print(f'line: {line}')
+                for line in lines:
                     if not all(t in line for t in ('otumat upload ', f' -p {package_name} ')):
                         f.write(line)
         except FileNotFoundError:
