@@ -329,8 +329,7 @@ class UsageAgent:
                                           f"{self.config['package_name']}_usage.vbs"))],
                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
                 else:
-                    os.system(' && '.join([f'{cmd} &>/dev/null & export OTUMAT_PID=$!',
-                                           'trap "kill $OTUMAT_PID" EXIT']))
+                    os.system(f'{cmd} &>/dev/null &')
         self.save_config()
 
     def show_logs(self):
