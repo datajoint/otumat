@@ -278,9 +278,9 @@ class UsageAgent:
                       f'tracking consent form: {link}')
             # start response server
             cancel_process = multiprocessing.Process(
-                target=lambda url, d: None if time.sleep(d) else urllib.request.urlopen(url),
-                args=(f'http://{local_ip}:{unused_port}/install-cancelled',
-                      self.config['response_timeout']))
+                target=_delayed_request,
+                kwargs=dict(url=f'http://{local_ip}:{unused_port}/install-cancelled',
+                            delay=self.config['response_timeout']))
             cancel_process.start()
             app.run(host='0.0.0.0', port=unused_port, debug=False)
             cancel_process.terminate()
@@ -466,6 +466,11 @@ class UsageAgent:
         while json.loads(pathlib.Path(self.home_path, 'config.json').read_text())['collect']:
             time.sleep(period - datetime.datetime.utcnow().timestamp() % period)
             self.send()
+
+
+def _delayed_request(*, url: str, delay: str = 0):
+    time.sleep(delay)
+    return urllib.request.urlopen(url)
 
 
 def _activate_startup(*, cmd: str, package_name: str):
