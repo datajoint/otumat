@@ -77,10 +77,10 @@ class UsageAgent:
                                 "this-directory-to-path-or") from None
 
         self.home_path = pathlib.Path(appdirs.user_data_dir(data_directory, author), 'usage')
-        if pathlib.Path(self.home_path, 'config.json').is_file():
+        try:
             # loading existing config
             self.config = json.loads(pathlib.Path(self.home_path, 'config.json').read_text())
-        else:
+        except FileNotFoundError:
             # initializing a new consent flow
             self.config = dict(author=author, data_directory=data_directory,
                                package_name=package_name, host=host,
