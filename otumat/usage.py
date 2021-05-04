@@ -446,7 +446,9 @@ class UsageAgent:
         # determine period in seconds
         period, unit = [int(e) if e.isdigit() else e
                         for e in re.findall(r'([0-9]+)([a-z]+)', frequency)[0]]
-        if unit == 'm':
+        if unit == 's':
+            pass
+        elif unit == 'm':
             period *= 60
         elif unit == 'h':
             period *= 60 * 60
