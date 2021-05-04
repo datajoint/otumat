@@ -205,7 +205,7 @@ class UsageAgent:
 
             # platform details
             mac_address = ':'.join(re.findall('..', f'{uuid.getnode():012x}'))
-            platform = 'Python'
+            platform_name = 'Python'
             platform_version = '.'.join([str(v) for v in sys.version_info[:-2]])
             try:
                 pkg_manager_version = subprocess.Popen(['conda', '--version'],
@@ -250,7 +250,7 @@ class UsageAgent:
             # build url
             initiated_timestamp = round(datetime.datetime.utcnow().timestamp())
             query_params = dict(operatingSystem=sys.platform, macAddress=mac_address,
-                                platform=platform, platformVersion=platform_version,
+                                platform=platform_name, platformVersion=platform_version,
                                 packageManager=pkg_manager,
                                 packageManagerVersion=pkg_manager_version,
                                 packageName=self.config['package_name'],
@@ -295,7 +295,7 @@ class UsageAgent:
                                    scope=scope, install_id=install_id, client_id=client_id,
                                    client_secret=client_secret,
                                    operating_system=sys.platform, mac_address=mac_address,
-                                   platform=platform, platform_version=platform_version,
+                                   platform=platform_name, platform_version=platform_version,
                                    package_manager=pkg_manager,
                                    package_manager_version=pkg_manager_version,
                                    package_version=package_version, location=location,
