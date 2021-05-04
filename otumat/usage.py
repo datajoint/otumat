@@ -328,8 +328,7 @@ class UsageAgent:
                                           f"{self.config['package_name']}_usage.vbs"))],
                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
                 else:
-                    # os.system(f'{cmd} &>/dev/null &')
-                    pass
+                    os.system(f'{cmd} &>/dev/null &')
         self.save_config()
 
     def show_logs(self):
