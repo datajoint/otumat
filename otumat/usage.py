@@ -538,6 +538,7 @@ def _deactivate_startup(*, package_name: str):
         try:
             with open(startup_file, 'w') as f:
                 for line in pathlib.Path(startup_file).read_text().splitlines():
+                    print(f'line: {line}')
                     if not all(t in line for t in ('otumat upload ', f' -p {package_name} ')):
                         f.write(line)
         except FileNotFoundError:
