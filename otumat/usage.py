@@ -63,23 +63,22 @@ class UsageAgent:
         :param upload_frequency: Usage data upload interval for daemon, defaults to '24h'
         :type upload_frequency: str, optional
         """
-        # verify `otumat` utility in PATH
-        try:
-            subprocess.Popen(['otumat', '-h'], stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE).communicate()
-        except FileNotFoundError:
-            raise Exception("`otumat` console utility not available in current PATH. "
-                            "Make sure that Python's bin and/or scripts directories are "
-                            "properly added to the PATH. See here for more details: "
-                            "https://stackoverflow.com/questions/49966547"
-                            "/pip-10-0-1-warning-consider-adding-"
-                            "this-directory-to-path-or") from None
-
         self.home_path = pathlib.Path(appdirs.user_data_dir(data_directory, author), 'usage')
         if pathlib.Path(self.home_path, 'config.json').is_file():
             # loading existing config
             self.config = json.loads(pathlib.Path(self.home_path, 'config.json').read_text())
         else:
+            # verify `otumat` utility in PATH
+            try:
+                subprocess.Popen(['otumat', '-h'], stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE).communicate()
+            except FileNotFoundError:
+                raise Exception("`otumat` console utility not available in current PATH. "
+                                "Make sure that Python's bin and/or scripts directories are "
+                                "properly added to the PATH. See here for more details: "
+                                "https://stackoverflow.com/questions/49966547"
+                                "/pip-10-0-1-warning-consider-adding-"
+                                "this-directory-to-path-or") from None
             # initializing a new consent flow
             self.config = dict(author=author, data_directory=data_directory,
                                package_name=package_name, host=host,
