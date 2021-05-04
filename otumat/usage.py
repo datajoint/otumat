@@ -328,8 +328,8 @@ class UsageAgent:
                                           f"{self.config['package_name']}_usage.vbs"))],
                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
                 else:
-                    # os.system(f'{cmd} & export OTUMAT_PID=$! && trap "kill $OTUMAT_PID" EXIT')
-                    os.system(f'{cmd} &>/dev/null & export OTUMAT_PID=$! && echo "kill $OTUMAT_PID" >> /tmp/hello.log')
+                    os.system(' && '.join([f'{cmd} &>/dev/null & export OTUMAT_PID=$!',
+                                           'trap "kill $OTUMAT_PID" EXIT']))
         self.save_config()
 
     def show_logs(self):
@@ -481,8 +481,8 @@ def _activate_startup(*, cmd: str, package_name: str):
         # trigger startup by appending to user's profile script, Bourne shell compatible
         startup_file = pathlib.Path(home_dir, '.profile')
         with open(startup_file, 'a') as f:
-            # f.write(f'{cmd} & export OTUMAT_PID=$! && trap "kill $OTUMAT_PID" EXIT\n')
-            f.write(f'{cmd} &>/dev/null & export OTUMAT_PID=$! && echo "kill $OTUMAT_PID" >> /tmp/hello.log\n')
+            f.write(
+                f'{cmd} &>/dev/null & export OTUMAT_PID=$! && trap "kill $OTUMAT_PID" EXIT\n')
     elif platform.system() == 'Darwin':
         # trigger startup using launchd by utiling launch agents
         startup_file = pathlib.Path(home_dir, 'Library', 'LaunchAgents',
