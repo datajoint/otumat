@@ -8,7 +8,7 @@ import shutil
 import datetime
 import webbrowser
 import logging
-import threading
+import multiprocessing
 # client info
 import re
 import uuid
@@ -276,15 +276,16 @@ class UsageAgent:
                       'machine, please navigate to the following link to access the usage '
                       f'tracking consent form: {link}')
             # start response server
-            threading.Thread(
+            cancel_process = multiprocessing.Process(
                 target=lambda url, d: None if time.sleep(d) else urllib.request.urlopen(url),
                 args=(f'http://{local_ip}:{unused_port}/install-cancelled',
-                      self.config['response_timeout']),
-                daemon=True).start()
+                      self.config['response_timeout']))
+            cancel_process.start()
             app.run(host='0.0.0.0', port=unused_port, debug=False)
             # received a response
             if cancelled:
                 print('Cancelled usage tracking installation. Disabling any logging.')
+                cancel_process.terminate()
                 self.config['collect'] = False
             else:
                 print('Thank you for providing consent. Creating `otumat` background startup '
