@@ -4,3 +4,5 @@ build
 dist
 __pycache__
 *.egg-info
+otumat/LICENSE
+otumat/meta.yaml
