@@ -1,6 +1,7 @@
 import argparse
 from . import __version__ as version
 from . import usage as otumat_usage
+from . import watch as otumat_watch
 import datetime
 
 
@@ -44,6 +45,26 @@ def otumat(args=None):
                                dest='frequency',
                                help='Schedule to send usage data e.g. 30s|1m|15m|1h|12h.')
 
+    parser_upload = subparsers.add_parser(
+        'watch',
+        description='Watch file for changes and run job on change.')
+    parser_upload.add_argument('-f', '--file',
+                               type=str,
+                               required=True,
+                               dest='watch_file',
+                               help='Path to file to be watched.')
+    parser_upload.add_argument('-s', '--script',
+                               type=str,
+                               required=True,
+                               dest='watch_script',
+                               help='Script to run on file change.')
+    parser_upload.add_argument('-a', '--arguments',
+                               nargs='+',
+                               type=str,
+                               required=False,
+                               dest='watch_args',
+                               help='Arguments providing state between runs.')
+
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
@@ -51,4 +72,8 @@ def otumat(args=None):
                                    if k not in ('start', 'frequency')}).recurring_send(**{
                                         k: v for k, v in kwargs.items()
                                         if k in ('start', 'frequency')})
+    elif command == 'watch':
+        otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
+                                watch_script=kwargs['watch_script'],
+                                watch_args=kwargs['watch_args'])
     raise SystemExit
