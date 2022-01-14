@@ -5,6 +5,7 @@ from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 from pathlib import Path
 
+
 my_list = ['1']
 
 class OnMyWatch:
@@ -55,5 +56,9 @@ class Handler(FileSystemEventHandler):
 
 class WatchAgent():
     def __init__(self, watch_file, watch_script, watch_args):
-        watch = OnMyWatch(watch_file, watch_script, watch_args)
-        watch.run()
+        self.watch = OnMyWatch(watch_file, watch_script, watch_args)
+    
+    def run(self):
+        self.watch.run()
+
+# otumat watch -f ../main/setup.py -s ../main/test.sh

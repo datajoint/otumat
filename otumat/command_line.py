@@ -75,5 +75,5 @@ def otumat(args=None):
     elif command == 'watch':
         otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
                                 watch_script=kwargs['watch_script'],
-                                watch_args=kwargs['watch_args'])
+                                watch_args=kwargs['watch_args']).run()
     raise SystemExit
