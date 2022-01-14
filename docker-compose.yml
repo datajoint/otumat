@@ -1,4 +1,4 @@
-# docker-compose up --build
+# PY_VER=3.9 CONDA_VER=4.10.3 docker-compose up --build
 version: '2.2'
 x-net: &net
   networks:
@@ -29,12 +29,16 @@ services:
     <<: *net
     build:
       context: .
-    working_dir: /src
+      args:
+        - PY_VER
+        - CONDA_VER
+    image: datajoint/otumat:v0.2.0
+    # working_dir: /main
     command:
       - sh
       - -c
       - tail -f /dev/null
     volumes:
-      - .:/src
+      - .:/main
 networks:
   main:
