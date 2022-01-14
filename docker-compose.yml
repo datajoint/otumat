@@ -4,25 +4,36 @@ x-net: &net
   networks:
       - main
 services:
+  # app:
+  #   <<: *net
+  #   build:
+  #     context: .
+  #     args:
+  #       - ALPINE_VER
+  #       - PY_VER
+  #   environment:
+  #     - TWINE_USERNAME
+  #     - TWINE_PASSWORD
+  #   working_dir: /src
+  #   command:
+  #     - sh
+  #     - -c
+  #     - |
+  #       # Prepare for conda-forge
+  #       grayskull pypi otumat
+  #       # Package
+  #       ./package.sh .
+  #   volumes:
+  #     - .:/src
   app:
     <<: *net
     build:
       context: .
-      args:
-        - ALPINE_VER
-        - PY_VER
-    environment:
-      - TWINE_USERNAME
-      - TWINE_PASSWORD
     working_dir: /src
     command:
       - sh
       - -c
-      - |
-        # Prepare for conda-forge
-        grayskull pypi otumat
-        # Package
-        ./package.sh .
+      - tail -f /dev/null
     volumes:
       - .:/src
 networks:

@@ -73,7 +73,7 @@ def otumat(args=None):
                                         k: v for k, v in kwargs.items()
                                         if k in ('start', 'frequency')})
     elif command == 'watch':
-        otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
+        otumat_watch.WatchAgent(watchfile=kwargs['watch_file'],
                                 watch_script=kwargs['watch_script'],
                                 watch_args=kwargs['watch_args'])
     raise SystemExit
