@@ -1,11 +1,8 @@
-ARG  PY_VER=3.8
-ARG  ALPINE_VER=3.10
-FROM python:${PY_VER}-alpine${ALPINE_VER}
+ARG  CONDA_VER=4.10.3
+ARG  PY_VER=3.9
+FROM datajoint/miniconda3:${CONDA_VER}-py${PY_VER}-debian
 
+COPY --chown=anaconda:anaconda ./apt_requirements.txt ./pip_requirements.txt /tmp/
 RUN \
-    # for packaging to PyPi and conda recipe generation
-    apk add gcc musl-dev libffi-dev openssl-dev git build-base && \
-    # version pinned cryptography due to Rust dependency (for now)
-    pip install --user cryptography==3.3.2 twine grayskull flask appdirs
-
-ENV PATH "/root/.local/bin:$PATH"
+    /entrypoint.sh echo "System packages installed." && \
+    rm /tmp/apt_requirements.txt /tmp/pip_requirements.txt

@@ -1,4 +1,4 @@
-# docker-compose up --build
+# PY_VER=3.9 CONDA_VER=4.10.3 HOST_UID=1000 docker-compose up --build
 version: '2.2'
 x-net: &net
   networks:
@@ -9,12 +9,12 @@ services:
     build:
       context: .
       args:
-        - ALPINE_VER
+        - CONDA_VER
         - PY_VER
     environment:
       - TWINE_USERNAME
       - TWINE_PASSWORD
-    working_dir: /src
+    user: ${HOST_UID}:anaconda
     command:
       - sh
       - -c
@@ -24,6 +24,7 @@ services:
         # Package
         ./package.sh .
     volumes:
-      - .:/src
+      - .:/main
+      - ./pip_requirements_deploy.txt:/tmp/pip_requirements.txt
 networks:
   main:

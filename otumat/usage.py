@@ -323,7 +323,7 @@ class UsageAgent:
                 _activate_startup(cmd=cmd, package_name=self.config['package_name'])
                 # manually starting usage data upload daemon
                 if platform.system() == 'Windows':
-                    p = subprocess.Popen(
+                    subprocess.Popen(
                         [str(pathlib.Path(os.getenv('USERPROFILE'), 'AppData', 'Roaming',
                                           'Microsoft', 'Windows', 'Start Menu', 'Programs',
                                           'Startup',
@@ -385,7 +385,7 @@ class UsageAgent:
                                      'Authorization': f"Bearer {self.config['access_token']}"},
                             data=json.dumps(body).encode('utf-8'))
                         try:
-                            response = urllib.request.urlopen(req)
+                            urllib.request.urlopen(req)
                         except urllib.error.HTTPError as e:
                             error_body = json.loads(e.read().decode())
                             if (e.code == 401 and isinstance(error_body, dict) and
@@ -395,7 +395,7 @@ class UsageAgent:
                                 self.send()
                             else:
                                 raise Exception('Unexpected server response...')
-                        except urllib.error.URLError as e:
+                        except urllib.error.URLError:
                             raise Exception('Connection refused when sending usage logs.')
                         else:
                             # insert successful, removing associated cached logs
@@ -419,12 +419,12 @@ class UsageAgent:
                          refresh_token=self.config['refresh_token'])).encode('utf-8'))
             try:
                 response = urllib.request.urlopen(req)
-            except urllib.error.HTTPError as e:
+            except urllib.error.HTTPError:
                 # access denied b/c refresh token has now expired
                 print('Usage upload connection has gone stale, requesting user to renew '
                       'token manually...')
                 self.install()
-            except urllib.error.URLError as e:
+            except urllib.error.URLError:
                 raise Exception('Connection refused when requesting a new token.')
             else:
                 # token returned successfully, update configuration

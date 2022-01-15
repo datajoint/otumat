@@ -1,0 +1,42 @@
+# PY_VER=3.9 CONDA_VER=4.10.3 AS_SCRIPT=FALSE HOST_UID=1000 docker-compose -f docker-compose-test.yaml up --build --exit-code-from app
+#
+# Intended for running test suite locally.
+# Note: If requirements or Dockerfile change, will need to add --build flag.
+version: '2.2'
+x-net: &net
+  networks:
+      - main
+services:
+  app:
+    <<: *net
+    build:
+      context: .
+      args:
+        - PY_VER
+        - CONDA_VER
+    image: datajoint/otumat:v0.3.0
+    environment:
+      - AS_SCRIPT
+    user: ${HOST_UID}:anaconda
+    volumes:
+      - .:/main
+      - ./pip_requirements_test.txt:/tmp/pip_requirements.txt
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        if echo "$${AS_SCRIPT}" | grep -i true; then
+          echo "------ SYNTAX TESTS ------"
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          echo "------ UNIT TESTS ------"
+          pytest -p no:cacheprovider -sv --cov-report term-missing --cov=otumat /main/tests
+          echo "------ STYLE TESTS ------"
+          flake8 . --count --max-complexity=20 --max-line-length=95 --statistics
+        else
+          echo "=== Running ==="
+          echo "Please see 'docker-compose-test.yaml' for detail on running tests."
+          tail -f /dev/null
+        fi
+networks:
+  main:
