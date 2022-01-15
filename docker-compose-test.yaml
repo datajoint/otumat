@@ -1,4 +1,4 @@
-# PY_VER=3.9 CONDA_VER=4.10.3 AS_SCRIPT=FALSE docker-compose -f docker-compose-test.yml up --build --exit-code-from app
+# PY_VER=3.9 CONDA_VER=4.10.3 AS_SCRIPT=FALSE HOST_UID=1000 docker-compose -f docker-compose-test.yaml up --build --exit-code-from app
 #
 # Intended for running test suite locally.
 # Note: If requirements or Dockerfile change, will need to add --build flag.
@@ -9,24 +9,28 @@ x-net: &net
 services:
   app:
     <<: *net
-    extends:
-      file: ./docker-compose.yml
-      service: app
+    build:
+      context: .
+      args:
+        - PY_VER
+        - CONDA_VER
+    image: datajoint/otumat:v0.3.0
     environment:
       - AS_SCRIPT
+    user: ${HOST_UID}:anaconda
     volumes:
-      - ./pip_requirements_test.txt:/tmp/pip_requirements_test.txt
+      - .:/main
+      - ./pip_requirements_test.txt:/tmp/pip_requirements.txt
     command:
       - sh
       - -c
       - |
         set -e
-        if echo "${AS_SCRIPT}" | grep -i true &>/dev/null; then
-          pip install -r /tmp/pip_requirements_test.txt
+        if echo "$${AS_SCRIPT}" | grep -i true; then
           echo "------ SYNTAX TESTS ------"
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           echo "------ UNIT TESTS ------"
-          pytest # -sv --cov-report term-missing --cov=otumat /main/tests
+          pytest -p no:cacheprovider -sv --cov-report term-missing --cov=otumat /main/tests
           echo "------ STYLE TESTS ------"
           flake8 . --count --max-complexity=20 --max-line-length=95 --statistics
         else
