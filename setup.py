@@ -1,7 +1,6 @@
 import setuptools
 import pathlib
 import otumat as package
-import pathlib
 import re
 
 here = pathlib.Path(__file__).parent.resolve()

@@ -9,6 +9,8 @@ import cryptography.hazmat.primitives
 import base64
 from .version import __version__
 
+__all__ = ['__version__']
+
 DISABLE_USAGE_TRACKING_PACKAGES = []
 
 
@@ -96,7 +98,7 @@ def _update_details_file(*, filepath, refpath, details):
     data = pathlib.Path(filepath).read_text()
     # perfrom a SHA1 hash (same as git) that closely matches: git ls-files -s <dirname>
     mode = 100644
-    hash = hashlib.sha1('blob {}\0{}'.format(len(data),data).encode()).hexdigest()
+    hash = hashlib.sha1('blob {}\0{}'.format(len(data), data).encode()).hexdigest()
     stage_no = 0
     relative_path = str(filepath.relative_to(refpath))
     details = '{}{} {} {}\t{}\n'.format(details, mode, hash, stage_no, relative_path)
