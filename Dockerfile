@@ -6,13 +6,3 @@ COPY --chown=anaconda:anaconda ./apt_requirements.txt ./pip_requirements.txt /tm
 RUN \
     /entrypoint.sh echo "System packages installed." && \
     rm /tmp/apt_requirements.txt /tmp/pip_requirements.txt
-
-
-# RUN \
-#     # for packaging to PyPi and conda recipe generation
-#     apk add gcc musl-dev libffi-dev openssl-dev git build-base 
-#     # && \
-#     # version pinned cryptography due to Rust dependency (for now)
-#     # pip install --user cryptography==3.3.2 twine grayskull flask appdirs watchdog
-
-# ENV PATH "/root/.local/bin:$PATH"
