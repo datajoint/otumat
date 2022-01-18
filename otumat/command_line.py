@@ -18,52 +18,62 @@ def otumat(args=None):
     subparsers = parser.add_subparsers(dest='subparser')
     parser_upload = subparsers.add_parser('upload',
                                           description='Upload buffered usage data.')
-    parser_upload.add_argument('-a', '--author',
-                               type=str,
-                               required=True,
-                               dest='author',
-                               help='Author of package which to collect usage data.')
-    parser_upload.add_argument('-d', '--data-directory',
-                               type=str,
-                               required=True,
-                               dest='data_directory',
-                               help='Directory name for usage data home.')
-    parser_upload.add_argument('-p', '--package-name',
-                               type=str,
-                               required=True,
-                               dest='package_name',
-                               help='Name of package which to collect usage data.')
-    parser_upload.add_argument('-s', '--start',
-                               type=lambda d: datetime.datetime.strptime(
-                                    d, '%Y-%m-%dT%H:%M:%S.%f'),
-                               required=True,
-                               dest='start',
-                               help='UTC datetime to start the schedule.')
-    parser_upload.add_argument('-f', '--frequency',
-                               type=str,
-                               required=True,
-                               dest='frequency',
-                               help='Schedule to send usage data e.g. 30s|1m|15m|1h|12h.')
+    required_named = parser_upload.add_argument_group('required named arguments')
 
-    parser_upload = subparsers.add_parser(
+    required_named.add_argument('-a', '--author',
+                                type=str,
+                                required=True,
+                                dest='author',
+                                help='Author of package which to collect usage data.')
+    required_named.add_argument('-d', '--data-directory',
+                                type=str,
+                                required=True,
+                                dest='data_directory',
+                                help='Directory name for usage data home.')
+    required_named.add_argument('-p', '--package-name',
+                                type=str,
+                                required=True,
+                                dest='package_name',
+                                help='Name of package which to collect usage data.')
+    required_named.add_argument('-s', '--start',
+                                type=lambda d: datetime.datetime.strptime(
+                                    d, '%Y-%m-%dT%H:%M:%S.%f'),
+                                required=True,
+                                dest='start',
+                                help='UTC datetime to start the schedule.')
+    required_named.add_argument('-f', '--frequency',
+                                type=str,
+                                required=True,
+                                dest='frequency',
+                                help='Schedule to send usage data e.g. 30s|1m|15m|1h|12h.')
+
+    parser_watch = subparsers.add_parser(
         'watch',
         description='Watch file for changes and run job on change.')
-    parser_upload.add_argument('-f', '--file',
-                               type=str,
-                               required=True,
-                               dest='watch_file',
-                               help='Path to file to be watched.')
-    parser_upload.add_argument('-s', '--script',
-                               type=str,
-                               required=True,
-                               dest='watch_script',
-                               help='Script to run on file change.')
-    parser_upload.add_argument('-a', '--arguments',
-                               nargs='+',
-                               type=str,
-                               required=False,
-                               dest='watch_args',
-                               help='Arguments providing state between runs.')
+    required_named = parser_watch.add_argument_group('required named arguments')
+    optional_named = parser_watch.add_argument_group('optional named arguments')
+
+    required_named.add_argument('-f', '--file',
+                                type=str,
+                                required=True,
+                                dest='watch_file',
+                                help='Path to file to be watched.')
+    optional_named.add_argument('-i', '--interval',
+                                type=int,
+                                required=False,
+                                default=5,
+                                dest='watch_interval',
+                                help='Interval between polls.')
+    required_named.add_argument('-s', '--script',
+                                type=str,
+                                required=True,
+                                dest='watch_script',
+                                help='Script to run on file change.')
+    optional_named.add_argument('watch_args',
+                                nargs='*',
+                                type=str,
+                                default=[],
+                                help='Arguments providing state between runs.')
 
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
@@ -74,6 +84,7 @@ def otumat(args=None):
                                         if k in ('start', 'frequency')})
     elif command == 'watch':
         otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
+                                watch_interval=kwargs['watch_interval'],
                                 watch_script=kwargs['watch_script'],
                                 watch_args=kwargs['watch_args']).run()
     raise SystemExit
