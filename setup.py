@@ -18,7 +18,7 @@ setuptools.setup(
     long_description=pathlib.Path('README.md').read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/datajoint/otumat",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=['tests*']),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

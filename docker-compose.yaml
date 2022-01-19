@@ -25,6 +25,6 @@ services:
         ./package.sh .
     volumes:
       - .:/main
-      - ./pip_requirements_deploy.txt:/tmp/pip_requirements.txt
+      - ./pip_requirements_delivery.txt:/tmp/pip_requirements.txt
 networks:
   main:

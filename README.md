@@ -61,6 +61,29 @@ _otumat.DISABLE_USAGE_TRACKING_PACKAGES = (['datajoint'] +
 import datajoint
 ```
 
+## File Watching
+
+This feature allows you to run a given script whenever a selected file is modified.
+
+To watch a file, install `otumat` using `pip install otumat`, then run the command:
+  
+  `otumat watch [-h] -f WATCH_FILE [-i WATCH_INTERVAL] -s  WATCH_SCRIPT [watch_args ...]`
+
+### Arguments
+
+Help:
+ - `-h, --help`
+
+Required named arguments:
+ - `-f WATCH_FILE`: Path to file to be watched.
+ - `-s WATCH_SCRIPT`: Path to script to run on file change.
+
+Optional named arguments:
+ - `-i WATCH_INTERVAL`: Interval in seconds between polls.
+    - Defaults to 5 seconds.
+ - `watch_args`: Arguments providing state between runs.
+    - Defaults to no arguments.
+
 ## Validation of Trusted Plugins
 
 This package also includes a setuptools extension that provides new keyword arguments `privkey_path` and `pubkey_path`. 

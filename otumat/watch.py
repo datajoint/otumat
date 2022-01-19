@@ -1,13 +1,12 @@
 import subprocess
-import time
+from datetime import datetime
 from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
-from pathlib import Path
 
 
 class OnMyWatch:
-    def __init__(self, watch_file, watch_script, watch_args):
-        self.observer = PollingObserver(timeout=0)
+    def __init__(self, watch_file, watch_interval, watch_script, watch_args):
+        self.observer = PollingObserver(timeout=watch_interval)
         self.watch_directory = watch_file
         self.watch_script = watch_script
         self.watch_args = watch_args
@@ -17,13 +16,10 @@ class OnMyWatch:
         self.observer.schedule(event_handler, self.watch_directory, recursive=True)
         self.observer.start()
         try:
-            while True:
-                time.sleep(5)
+            self.observer.join()
         except KeyboardInterrupt:
             self.observer.stop()
             print("\nObserver Stopped")
-
-        self.observer.join()
 
 
 class Handler(FileSystemEventHandler):
@@ -39,18 +35,16 @@ class Handler(FileSystemEventHandler):
 
         elif event.event_type == 'modified':
             # Event is modified, you can process it now
-            print("Watchdog received modified event - % s." % event.src_path)
-            file_extension = Path(self.watch_script).suffix
-            if file_extension == '.sh':
-                self.watch_args = subprocess.Popen(
-                    ['sh', self.watch_script, *self.watch_args],
-                    stdout=subprocess.PIPE).communicate()[0].decode('utf-8').split('\n')[:-1]
-            # elif file_extension == '.bat':
+            print(f'=== [{datetime.now().isoformat()}] \
+                OTUMAT WATCH: {event.src_path} modified ===')
+            self.watch_args = subprocess.Popen(
+                [self.watch_script, *self.watch_args],
+                stdout=subprocess.PIPE).communicate()[0].decode('utf-8').split('\n')[:-1]
 
 
 class WatchAgent():
-    def __init__(self, watch_file, watch_script, watch_args):
-        self.watch = OnMyWatch(watch_file, watch_script, watch_args)
+    def __init__(self, watch_file, watch_interval, watch_script, watch_args):
+        self.watch = OnMyWatch(watch_file, watch_interval, watch_script, watch_args)
 
     def run(self):
         self.watch.run()
