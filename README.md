@@ -76,11 +76,13 @@ Help:
 
 Required named arguments:
  - `-f WATCH_FILE`: Path to file to be watched.
- - `-s WATCH_SCRIPTT`: Path to script to run on file change.
+ - `-s WATCH_SCRIPT`: Path to script to run on file change.
 
 Optional named arguments:
  - `-i WATCH_INTERVAL`: Interval in seconds between polls.
+    - Defaults to 5 seconds.
  - `watch_args`: Arguments providing state between runs.
+    - Defaults to no arguments.
 
 ## Validation of Trusted Plugins
 
