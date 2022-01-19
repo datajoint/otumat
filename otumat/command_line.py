@@ -64,7 +64,7 @@ def otumat(args=None):
                                 default=5,
                                 dest='watch_interval',
                                 help='Interval between polls in seconds. \
-                                    Defaults to 5 seconds.')
+                                      Defaults to 5 seconds.')
     required_named.add_argument('-s', '--script',
                                 type=str,
                                 required=True,
@@ -75,7 +75,7 @@ def otumat(args=None):
                                 type=str,
                                 default=[],
                                 help='Arguments providing state between runs. \
-                                    Defaults to no arguments.')
+                                      Defaults to no arguments.')
 
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
