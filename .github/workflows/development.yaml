@@ -30,7 +30,6 @@ jobs:
           echo "PRERELEASE=${PRERELEASE}"
           echo "DRAFT=${DRAFT}"
   test:
-    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
