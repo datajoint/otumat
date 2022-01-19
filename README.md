@@ -63,7 +63,7 @@ import datajoint
 
 ## File Watching
 
-This feature allows you to run a given script when a selected file is modified.
+This feature allows you to run a given script whenever a selected file is modified.
 
 To watch a file, install `otumat` using `pip install otumat`, then run the command:
   
