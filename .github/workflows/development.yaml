@@ -1,9 +1,7 @@
 name: Development
 on:
-  # pull_request:
+  pull_request:
   push:
-    branches:
-      - 'watch_file'
     tags:
       - '*.*.*'
 jobs:
