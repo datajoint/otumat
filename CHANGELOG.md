@@ -26,5 +26,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ### Changed
 - Replace Alpine image with Debian. PR #4
 
+### Removed
+- Removed version pin for cryptography. PR #4
+
 [0.3.1]: https://github.com/datajoint/otumat/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/datajoint/otumat/compare/v0.2.0...v0.3.0
