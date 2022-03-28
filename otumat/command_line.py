@@ -1,5 +1,4 @@
 import argparse
-from xmlrpc.client import Boolean
 from . import __version__ as version
 from . import usage as otumat_usage
 from . import watch as otumat_watch
@@ -82,7 +81,6 @@ def otumat(args=None):
                                 default=[],
                                 help='Arguments providing state between runs. \
                                       Defaults to no arguments.')
-                                      
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
