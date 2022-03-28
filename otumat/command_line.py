@@ -1,4 +1,5 @@
 import argparse
+from xmlrpc.client import Boolean
 from . import __version__ as version
 from . import usage as otumat_usage
 from . import watch as otumat_watch
@@ -70,13 +71,18 @@ def otumat(args=None):
                                 required=True,
                                 dest='watch_script',
                                 help='Script to run on file change.')
+    optional_named.add_argument('--initialize',
+                                required=False,
+                                action='store_true',
+                                dest='watch_init',
+                                help='Flag for running the script on start')
     optional_named.add_argument('watch_args',
                                 nargs='*',
                                 type=str,
                                 default=[],
                                 help='Arguments providing state between runs. \
                                       Defaults to no arguments.')
-
+                                      
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
@@ -88,5 +94,6 @@ def otumat(args=None):
         otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
                                 watch_interval=kwargs['watch_interval'],
                                 watch_script=kwargs['watch_script'],
+                                watch_init=kwargs['watch_init'],
                                 watch_args=kwargs['watch_args']).run()
     raise SystemExit
