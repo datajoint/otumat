@@ -65,16 +65,16 @@ def otumat(args=None):
                                 dest='watch_interval',
                                 help='Interval between polls in seconds. \
                                       Defaults to 5 seconds.')
-    required_named.add_argument('-s', '--script',
-                                type=str,
-                                required=True,
-                                dest='watch_script',
-                                help='Script to run on file change.')
     optional_named.add_argument('--initialize',
                                 required=False,
                                 action='store_true',
                                 dest='watch_init',
                                 help='Flag for running the script on start')
+    required_named.add_argument('-s', '--script',
+                                type=str,
+                                required=True,
+                                dest='watch_script',
+                                help='Script to run on file change.')
     optional_named.add_argument('watch_args',
                                 nargs='*',
                                 type=str,
@@ -91,7 +91,7 @@ def otumat(args=None):
     elif command == 'watch':
         otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
                                 watch_interval=kwargs['watch_interval'],
-                                watch_script=kwargs['watch_script'],
                                 watch_init=kwargs['watch_init'],
+                                watch_script=kwargs['watch_script'],
                                 watch_args=kwargs['watch_args']).run()
     raise SystemExit
