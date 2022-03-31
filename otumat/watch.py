@@ -12,7 +12,6 @@ class OnMyWatch:
         self.watch_script = watch_script
         self.watch_args = watch_args
 
-
     def run(self):
         if self.watch_init:
             self.watch_args = subprocess.Popen(
