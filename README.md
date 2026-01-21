@@ -1,3 +1,7 @@
+> ⚠️ **This repository is archived and no longer maintained.**
+> Pip package maintainer tools, no longer maintained.
+> For current DataJoint development, see [datajoint-python](https://github.com/datajoint/datajoint-python).
+
 # Otumat: Maintainer Tools & Utilities
 
 Otumat (pronounced "Automate") is a suite of maintainer tools and utilities for pip packages.
