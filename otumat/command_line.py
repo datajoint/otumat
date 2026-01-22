@@ -65,6 +65,11 @@ def otumat(args=None):
                                 dest='watch_interval',
                                 help='Interval between polls in seconds. \
                                       Defaults to 5 seconds.')
+    optional_named.add_argument('--initialize',
+                                required=False,
+                                action='store_true',
+                                dest='watch_init',
+                                help='Flag for running the script on start')
     required_named.add_argument('-s', '--script',
                                 type=str,
                                 required=True,
@@ -76,7 +81,6 @@ def otumat(args=None):
                                 default=[],
                                 help='Arguments providing state between runs. \
                                       Defaults to no arguments.')
-
     kwargs = vars(parser.parse_args(args))
     command = kwargs.pop('subparser')
     if command == 'upload':
@@ -87,6 +91,7 @@ def otumat(args=None):
     elif command == 'watch':
         otumat_watch.WatchAgent(watch_file=kwargs['watch_file'],
                                 watch_interval=kwargs['watch_interval'],
+                                watch_init=kwargs['watch_init'],
                                 watch_script=kwargs['watch_script'],
                                 watch_args=kwargs['watch_args']).run()
     raise SystemExit
